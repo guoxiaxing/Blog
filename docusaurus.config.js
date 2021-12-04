@@ -6,31 +6,24 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
-  url: 'https://your-docusaurus-test-site.com',
+  title: 'Try\'s Blog',
+  tagline: '记录📝',
+  url: 'https://guoxiaxing.github.io',
   baseUrl: '/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'docusaurus', // Usually your repo name.
+  favicon: 'img/logo.jpeg',
+  organizationName: 'guoxiaxing', // Usually your GitHub org/user name.
+  projectName: 'Blog', // Usually your repo name.
 
   presets: [
     [
       '@docusaurus/preset-classic',
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
-        docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/edit/main/website/',
-        },
+        docs: false,
         blog: {
-          showReadingTime: true,
-          // Please change this to your repo.
-          editUrl:
-            'https://github.com/facebook/docusaurus/edit/main/website/blog/',
+          path: './blog',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -43,21 +36,17 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'My Site',
+        title: 'Try\'s Blog',
         logo: {
-          alt: 'My Site Logo',
-          src: 'img/logo.svg',
+          alt: 'Try\'s Blog',
+          src: 'img/logo.jpeg',
         },
         items: [
+          {to: '/blog', label: '日常积累', position: 'left'},
+          {to: '/fragment', label: '框架', position: 'left'},
+          {to: '/typescript', label: 'Typescript', position: 'left'},
           {
-            type: 'doc',
-            docId: 'intro',
-            position: 'left',
-            label: 'Tutorial',
-          },
-          {to: '/blog', label: 'Blog', position: 'left'},
-          {
-            href: 'https://github.com/facebook/docusaurus',
+            href: 'https://github.com/guoxiaxing/',
             label: 'GitHub',
             position: 'right',
           },
@@ -67,52 +56,62 @@ const config = {
         style: 'dark',
         links: [
           {
-            title: 'Docs',
+            title: '社区',
             items: [
               {
-                label: 'Tutorial',
-                to: '/docs/intro',
-              },
-            ],
-          },
-          {
-            title: 'Community',
-            items: [
-              {
-                label: 'Stack Overflow',
-                href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-              },
-              {
-                label: 'Discord',
-                href: 'https://discordapp.com/invite/docusaurus',
-              },
-              {
-                label: 'Twitter',
-                href: 'https://twitter.com/docusaurus',
-              },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                to: '/blog',
-              },
-              {
-                label: 'GitHub',
-                href: 'https://github.com/facebook/docusaurus',
+                label: '掘金',
+                href: 'https://juejin.cn/user/4362499364494445',
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with GuoXiaxing.`,
       },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
       },
+    
     }),
+    plugins: [
+      [
+        '@docusaurus/plugin-content-blog',
+        {
+          /**
+           * 此参数对于任何支持多实例的插件都需要
+           */
+          id: 'fragment',
+          /**
+           * URL route for the blog section of your site.
+           * *不要* 在末尾添加斜线（/）
+           */
+          routeBasePath: 'fragment',
+          /**
+           * 指向存放博客文章的目录的路径。相对于网站根目录。
+           */
+          path: './fragment',
+        },
+        
+      ],[
+        '@docusaurus/plugin-content-blog',
+        {
+          /**
+           * 此参数对于任何支持多实例的插件都需要
+           */
+          id: 'typescript',
+          /**
+           * URL route for the blog section of your site.
+           * *不要* 在末尾添加斜线（/）
+           */
+          routeBasePath: 'typescript',
+          /**
+           * 指向存放博客文章的目录的路径。相对于网站根目录。
+           */
+          path: './typescript',
+        },
+        
+      ]
+    ]
 };
 
 module.exports = config;
