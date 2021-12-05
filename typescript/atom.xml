@@ -2,62 +2,217 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://guoxiaxing.github.io/Blog/typescript</id>
     <title>Try's Blog Blog</title>
-    <updated>2021-08-26T00:00:00.000Z</updated>
+    <updated>2021-12-05T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://guoxiaxing.github.io/Blog/typescript"/>
     <subtitle>Try's Blog Blog</subtitle>
     <icon>https://guoxiaxing.github.io/Blog/img/logo.jpeg</icon>
     <entry>
-        <title type="html"><![CDATA[Welcome]]></title>
-        <id>welcome</id>
-        <link href="https://guoxiaxing.github.io/Blog/typescript/welcome"/>
-        <updated>2021-08-26T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Docusaurus blogging features are powered by the blog plugin.]]></summary>
-        <content type="html"><![CDATA[<p><a href="https://docusaurus.io/docs/blog">Docusaurus blogging features</a> are powered by the <a href="https://docusaurus.io/docs/api/plugins/@docusaurus/plugin-content-blog">blog plugin</a>.</p><p>Simply add Markdown files (or folders) to the <code>blog</code> directory.</p><p>Regular blog authors can be added to <code>authors.yml</code>.</p><p>The blog post date can be extracted from filenames, such as:</p><ul><li><code>2019-05-30-welcome.md</code></li><li><code>2019-05-30-welcome/index.md</code></li></ul><p>A blog post folder can be convenient to co-locate blog post images:</p><p><img src="./docusaurus-plushie-banner.jpeg" alt="Docusaurus Plushie"/></p><p>The blog supports tags as well!</p><p><strong>And if you don&#x27;t want a blog</strong>: just delete this directory, and use <code>blog: false</code> in your Docusaurus config.</p>]]></content>
-        <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
-        </author>
-        <author>
-            <name>Yangshun Tay</name>
-            <uri>https://github.com/yangshun</uri>
-        </author>
+        <title type="html"><![CDATA[Typescript 3.7 常用新特性]]></title>
+        <id>typescript-3.7</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-3.7"/>
+        <updated>2021-12-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[写在前面]]></summary>
+        <content type="html"><![CDATA[<h2>写在前面</h2><p>不是完整的版本新特性，这里只写出了我觉得常用的新特性</p><h2>可选链式运算符 ?.</h2><p>js 也支持了这个特性</p><p><code>obj?.prop</code> 当 obj 为 null/undefined 式直接返回 undefined，可以用来代替<code>obj &amp;&amp; obj.prop</code></p><pre><code class="language-typescript">// Before
+if (foo &amp;&amp; foo.bar &amp;&amp; foo.bar.baz) {
+  // ...
+}
+
+// After-ish
+if (foo?.bar?.baz) {
+  // ...
+}
+</code></pre><ul><li>可以用于访问数组或者式对象索引</li></ul><pre><code class="language-typescript">arr?.[1];
+const name = &quot;name&quot;;
+obj?.[name];
+</code></pre><ul><li>可以用于函数调用</li></ul><pre><code class="language-typescript">obj.func?.(123);
+</code></pre><h2>空合并运算符 ??</h2><p><code>a ?? b</code> 当 a 为 null/undefined 的时候返回 b，其余返回 a</p><h3>?? 和 &amp;&amp; 的区别</h3><p><code>&amp;&amp;</code>运算符当前面的变量式假值（false/0/null/undefined/NaN/&#x27;&#x27;）式都会返回后面的变量，有时候这可能不是我们想要的；<code>??</code>则只会过滤 null 和 undefined</p><h2>type 的扩展使用</h2><ul><li>type 类型定义时可以使用自己</li></ul><pre><code class="language-typescript">type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [property: string]: Json }
+  | Json[];
+</code></pre><h2>断言扩展</h2><p>throw 如果发生意外情况，则有一组特定的函数会出错。它们被称为“断言”功能。例如，Node.js 为此有一个专用功能 assert。</p><pre><code class="language-javascript">assert(someValue === 42);
+</code></pre><p>在此示例中，如果 someValue 不等于 42，assert 则将抛出 AssertionError。</p><p>JavaScript 中的断言通常用于防止传入不正确的类型。例如:</p><pre><code class="language-javascript">function multiply(x, y) {
+  assert(typeof x === &quot;number&quot;);
+  assert(typeof y === &quot;number&quot;);
+
+  return x * y;
+}
+</code></pre><p>TypeScript 3.7 引入了一个称为“断言签名”的新概念，可以对这些断言函数进行建模。
+确保在包含范围的其余部分中，无论检查什么条件都必须为真。</p><pre><code class="language-typescript">function assert(condition: any, msg?: string): asserts condition {
+  if (!condition) {
+    throw new TypeError(msg);
+  }
+}
+</code></pre><pre><code class="language-typescript">function yell(str) {
+  assert(typeof str === &quot;string&quot;);
+
+  return str.toUppercase();
+  //         ~~~~~~~~~~~
+  // error: Property &#x27;toUppercase&#x27; does not exist on type &#x27;string&#x27;.
+  //        Did you mean &#x27;toUpperCase&#x27;?
+}
+
+function assert(condition: any, msg?: string): asserts condition {
+  if (!condition) {
+    throw new TypeError(msg);
+  }
+}
+</code></pre><p>断言签名的另一种类型不检查条件，而是告诉 TypeScript 特定的变量或属性具有不同的类型。其余范围内 val 一定是 string，类似于类型守卫</p><pre><code class="language-typescript">function assertIsString(val: any): asserts val is string {
+  if (typeof val !== &quot;string&quot;) {
+    throw new TypeError(&quot;Not a string!&quot;);
+  }
+}
+</code></pre>]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[MDX Blog Post]]></title>
-        <id>mdx-blog-post</id>
-        <link href="https://guoxiaxing.github.io/Blog/typescript/mdx-blog-post"/>
-        <updated>2021-08-01T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Blog posts support Docusaurus Markdown features, such as MDX.]]></summary>
-        <content type="html"><![CDATA[<p>Blog posts support <a href="https://docusaurus.io/docs/markdown-features">Docusaurus Markdown features</a>, such as <a href="https://mdxjs.com/">MDX</a>.</p><p>:::tip</p><p>Use the power of React to create interactive blog posts.</p><pre><code class="language-js">&lt;button onClick={() =&gt; alert(&#x27;button clicked!&#x27;)}&gt;Click me!&lt;/button&gt;
-</code></pre><button>Click me!</button><p>:::</p>]]></content>
-        <author>
-            <name>Sébastien Lorber</name>
-            <uri>https://sebastienlorber.com</uri>
-        </author>
+        <title type="html"><![CDATA[Typescript 3.8 常用新特性]]></title>
+        <id>typescript-3.8</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-3.8"/>
+        <updated>2021-12-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[类型限制的导入导出方法 (Type-Only Imports and Export)]]></summary>
+        <content type="html"><![CDATA[<h2>类型限制的导入导出方法 (Type-Only Imports and Export)</h2><p>TypeScript 3.8 为仅类型导入和导出添加了新语法。此时导入、导出的变量只能作为类型使用</p><pre><code class="language-typescript">import type { SomeThing } from &quot;./some-module.js&quot;;
+
+export type { SomeThing };
+</code></pre><pre><code class="language-typescript">import type { Component } from &quot;react&quot;;
+
+interface ButtonProps {
+    // ...
+}
+
+class Button extends Component&lt;ButtonProps&gt; {
+    //               ~~~~~~~~~
+    // error! &#x27;Component&#x27; only refers to a type, but is being used as a value here.
+
+    // ...
+}
+</code></pre><h2>ECMAScript 提案的私有字段（ECMAScript Private Fields）</h2><h3>Private Fields 的基本特性</h3><ul><li><p>js 中已经有提案，但是浏览器中还不支持</p></li><li><p>typescript 中已经可以使用<code>#</code>来定义真正的私有属性了</p></li></ul><pre><code class="language-typescript">class Person {
+    #name: string
+
+    constructor(name: string) {
+        this.#name = name;
+    }
+
+    greet() {
+        console.log(`Hello, my name is ${this.#name}!`);
+    }
+}
+
+let jeremy = new Person(&quot;Jeremy Bearimy&quot;);
+
+jeremy.#name
+//     ~~~~~
+// Property &#x27;#name&#x27; is not accessible outside class &#x27;Person&#x27;
+// because it has a private identifier.
+</code></pre><p>⚠️ 和常规属性(这里特别比较 private 修饰符声明的比较)不同，私有字段(private fields)拥有下面这些特性。</p><ul><li>专用字段以 # 字符开头。有时我们称这些 prviate name。</li><li>每个专用字段名称都唯一地限定于其包含的类。</li><li>TypeScript 辅助功能修饰符，例如 public，private 不能在私有字段上使用。</li></ul><h3>Private Fields 的使用规范</h3><p>除了能保存自己的私有这一属性以外，私有字段的另一个好处是我们刚才提到的唯一性。例如，常规属性声明易于在子类中被覆盖。而 <code>private fields</code> 是受保护的。</p><pre><code class="language-typescript">class C {
+  foo = 10;
+
+  cHelper() {
+    return this.foo;
+  }
+}
+
+class D extends C {
+  foo = 20;
+
+  dHelper() {
+    return this.foo;
+  }
+}
+
+let instance = new D();
+// &#x27;this.foo&#x27; refers to the same property on each instance.
+console.log(instance.cHelper()); // prints &#x27;20&#x27;
+console.log(instance.dHelper()); // prints &#x27;20&#x27;
+</code></pre><h3>那我们到底该使用 # 定制的私有字段还是使用 private 修饰符?</h3><p>当涉及到属性时，TypeScript 的<code>private</code>修饰符会并没有完全正确的执行，它的行为完全像普通属性一样，我们称之为 <code>soft privacy</code>, 我们依然可以通过 <code>[&#x27;foo&#x27;]</code> 这样的形式访问到。看下面的代码：</p><pre><code class="language-typescript">class C {
+  private foo = 10;
+}
+
+// This is an error at compile time,
+// but when TypeScript outputs .js files,
+// it&#x27;ll run fine and print &#x27;10&#x27;.
+console.log(new C().foo); // prints &#x27;10&#x27;
+//                  ~~~
+// error! Property &#x27;foo&#x27; is private and only accessible within class &#x27;C&#x27;.
+
+// TypeScript allows this at compile-time
+// as a &quot;work-around&quot; to avoid the error.
+console.log(new C()[&quot;foo&quot;]); // prints &#x27;10&#x27;
+</code></pre><p>对比下面使用 <code>#</code> 私有字段，是完全访问不到的</p><pre><code class="language-typescript">class C {
+    #foo = 10;
+}
+
+console.log(new C().#foo); // SyntaxError
+//                  ~~~~
+// TypeScript reports an error *and*
+// this won&#x27;t work at runtime!
+
+console.log(new C()[&quot;#foo&quot;]); // prints undefined
+//          ~~~~~~~~~~~~~~~
+// TypeScript reports an error under &#x27;noImplicitAny&#x27;,
+// and this prints &#x27;undefined&#x27;.
+</code></pre><p><strong>结论就是，如果你想严格的保护您的私有属性的值，就使用 <code>#</code> 即可，子类继承的时候也无需担心命名冲突的问题。当我们还是使用 <code>private</code> 的时候就需要注意对私有修饰符的定义的值修改的问题了.</strong></p><h2>export <!-- -->*<!-- --> as xxx 语法使用</h2><p>typescript 也支持这种用法啦，在导入模块的 as 重新定义模块名的模块的时候，我们可以重新导出到单独模块名。</p><p>menu.ts</p><pre><code class="language-typescript">export const MENU1 = &quot;nav: 菜单 1&quot;;
+export const MENU2 = &quot;nav: 菜单 2&quot;;
+export const MENU3 = &quot;nav: 菜单 3&quot;;
+export const MENU4 = &quot;nav: 菜单 4&quot;;
+export const DEMO = &quot;nav:Demo&quot;;
+</code></pre><p>index.ts</p><pre><code class="language-typescript">import * as menu from &quot;./menu.ts&quot;;
+console.log(menu.MENU1); // &#x27;nav: 菜单 1&#x27;；
+console.log(menu.MENU2); // &#x27;nav: 菜单 2&#x27;；
+// ....
+
+export { menu };
+</code></pre><h3><code>import * as React from &#x27;react&#x27;; vs import React from &#x27;react&#x27;;</code> 这两个使用有什么区别?</h3><p>简而言之就是我们使用的 <code>import React from &#x27;react&#x27;</code> 其实是导出的默认的模块，而用到 <code>* as</code> 是导出全部模块。</p><h2>顶层 await 使用</h2><p>js 也支持啦 😄</p><pre><code class="language-typescript">const response = await fetch(&quot;...&quot;);
+const greeting = await response.text();
+console.log(greeting);
+
+// Make sure we&#x27;re a module
+export {};
+</code></pre><blockquote><p>注意：顶层 await 只会在模块中起作用，在非模块文件中使用会报错。顶层 await 仅在模块的顶层起作用，并且只有当 TypeScript 找到一个真正可用的模块才允许使用，我们可以用一个 export {} 来检测是否在模块下使用。</p></blockquote><pre><code class="language-typescript">const response = await fetch(&quot;...&quot;);
+const greeting = await response.text();
+console.log(greeting);
+
+// &#x27;await&#x27; expressions are only allowed at the top level of a file when that file is a module, but this file has no imports or exports. Consider adding an empty &#x27;export {}&#x27; to make this file a module.
+</code></pre>]]></content>
     </entry>
     <entry>
-        <title type="html"><![CDATA[Long Blog Post]]></title>
-        <id>long-blog-post</id>
-        <link href="https://guoxiaxing.github.io/Blog/typescript/long-blog-post"/>
-        <updated>2019-05-29T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[This is the summary of a very long blog post,]]></summary>
-        <content type="html"><![CDATA[<p>This is the summary of a very long blog post,</p><p>Use a <code>&lt;!--</code> <code>truncate</code> <code>--&gt;</code> comment to limit blog post size in the list view.</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content>
-        <author>
-            <name>Endilie Yacop Sucipto</name>
-            <uri>https://github.com/endiliey</uri>
-        </author>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[First Blog Post]]></title>
-        <id>first-blog-post</id>
-        <link href="https://guoxiaxing.github.io/Blog/typescript/first-blog-post"/>
-        <updated>2019-05-28T00:00:00.000Z</updated>
-        <summary type="html"><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet]]></summary>
-        <content type="html"><![CDATA[<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content>
-        <author>
-            <name>Gao Wei</name>
-            <uri>https://github.com/wgao19</uri>
-        </author>
+        <title type="html"><![CDATA[Typescript 3.9 常用新特性]]></title>
+        <id>typescript-3.9</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-3.9"/>
+        <updated>2021-12-05T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[写在前面]]></summary>
+        <content type="html"><![CDATA[<h2>写在前面</h2><p>挑重点的讲一讲</p><h2>在条件语句中检测未调用的函数</h2><ul><li>在 3.7 的时候引入了检测未调用函数错误提示，3.9 做了部分优化</li></ul><pre><code class="language-typescript">function hasImportantPermissions(): boolean {
+  // ...
+}
+// Oops!
+if (hasImportantPermissions) {
+  //  ~~~~~~~~~~~~~~~~~~~~~~~
+  // This condition will always return true since the function is always defined.
+  // Did you mean to call it instead?
+  deleteAllTheImportantFiles();
+}
+</code></pre><p>但是，此错误仅适用于 if 语句中的条件。现在三元条件（即语法）现在也支持此功能。</p><pre><code class="language-typescript">declare function listFilesOfDirectory(dirPath: string): string[];
+declare function isDirectory(): boolean;
+function getAllFiles(startFileName: string) {
+  const result: string[] = [];
+  traverse(startFileName);
+  return result;
+  function traverse(currentPath: string) {
+    return isDirectory
+      ? //     ~~~~~~~~~~~
+        // This condition will always return true
+        // since the function is always defined.
+        // Did you mean to call it instead?
+        listFilesOfDirectory(currentPath).forEach(traverse)
+      : result.push(currentPath);
+  }
+}
+</code></pre><h2>解析可选链与非 null 断言中的差异</h2><ul><li>TypeScript 最近实现了对可选链操作符的支持，但根据广大使用者的反馈，非 null 断言操作符（!）的可选链（?.）行为不符合直觉。</li></ul><pre><code class="language-typescript">foo?.bar!.baz;
+</code></pre><p>被解释为等效于以下 JavaScript 代码：</p><pre><code class="language-javascript">(foo?.bar).baz;
+</code></pre><blockquote><p>在以上代码中，括号会阻止可选链的“短路”行为；因此如果未定义 foo 为 undefined，则访问 baz 会引发运行时错误。</p></blockquote><p>换句话说，大多数人认为以上原始代码片段应该被解释为在：</p><pre><code class="language-typescript">foo?.bar.baz;
+</code></pre><p>中，当 foo 为 undefined 时，计算结果为 undefined。</p><p>这是一项重大变化，但我们认为大部分代码在编写时都是为了考虑新的解释场景。如果您希望继续使用旧有行为，则可在!操作符左侧添加括号，如下所示：</p><pre><code>(foo?.bar)!.baz;
+</code></pre>]]></content>
     </entry>
 </feed>
