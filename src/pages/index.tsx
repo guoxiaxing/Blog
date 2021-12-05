@@ -24,7 +24,7 @@ export default function Home(): JSX.Element {
     >
       <Homepage />
       <div className={styles.indexImg}>
-        <img src="/img/logo.jpeg" alt="" />
+        <img src={siteConfig.baseUrl + "img/logo.jpeg"} alt="" />
       </div>
       <p
         className="hero__subtitle"
