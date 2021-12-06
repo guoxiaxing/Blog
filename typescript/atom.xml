@@ -2,11 +2,459 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://guoxiaxing.github.io/Blog/typescript</id>
     <title>Try's Blog Blog</title>
-    <updated>2021-12-05T00:00:00.000Z</updated>
+    <updated>2021-12-06T00:00:00.000Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://guoxiaxing.github.io/Blog/typescript"/>
     <subtitle>Try's Blog Blog</subtitle>
     <icon>https://guoxiaxing.github.io/Blog/img/logo.jpeg</icon>
+    <entry>
+        <title type="html"><![CDATA[Typescript 4.0 常用新特性]]></title>
+        <id>typescript-4.0</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-4.0"/>
+        <updated>2021-12-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[写在前面]]></summary>
+        <content type="html"><![CDATA[<h2>写在前面</h2><p>并不是所有的新新特性，只是罗列一些重点的</p><h2>可变元祖类型</h2><h3>元组类型语法中的 spread 现在可以泛型</h3><pre><code class="language-typescript">function tail&lt;T extends any[]&gt;(arr: readonly [any, ...T]) {
+  const [_ignored, ...rest] = arr;
+  return rest;
+}
+const myTuple = [1, 2, 3, 4] as const;
+const myArray = [&quot;hello&quot;, &quot;world&quot;];
+// type [2, 3, 4]
+const r1 = tail(myTuple);
+// type [2, 3, ...string[]]
+const r2 = tail([...myTuple, ...myArray] as const);
+</code></pre><h3>rest 元素可以出现在元组中的任何位置，而不仅仅是在结尾</h3><pre><code class="language-typescript">type Strings = [string, string];
+type Numbers = [number, number];
+// [string, string, number, number]
+type StrStrNumNum = [...Strings, ...Numbers];
+</code></pre><p>当我们在没有已知长度的类型中 spread 时，结果类型也将变得不受限制，并且后面的所有元素都会变为结果的 rest 元素类型。</p><pre><code class="language-typescript">type Strings = [string, string];
+type Numbers = number[];
+// [string, string, ...Array&lt;number | boolean&gt;]
+type Unbounded = [...Strings, ...Numbers, boolean];
+</code></pre><h2>标记的元组元素</h2><pre><code class="language-typescript">type Range = [start: number, end: number];
+</code></pre><p><strong>标记元组使用时有些规则，其中一条是：在标记一个元组元素时，还必须标记元组中的所有其他元素。</strong></p><h2>构造器的类属性推断</h2><pre><code class="language-typescript">class Square {
+  // Previously: implicit any!
+  // Now: inferred to `number`!
+  area;
+  sideLength;
+  constructor(sideLength: number) {
+    this.sideLength = sideLength;
+    this.area = sideLength ** 2;
+  }
+}
+</code></pre><p>如果构造器的路径并非都分配给一个实例成员，则该属性可能被认为是 undefined 的。</p><pre><code class="language-javascript">class Square {
+  sideLength;
+  constructor(sideLength: number) {
+    if (Math.random()) {
+      this.sideLength = sideLength;
+    }
+  }
+  get area() {
+    return this.sideLength ** 2;
+    //     ~~~~~~~~~~~~~~~
+    // error! Object is possibly &#x27;undefined&#x27;.
+  }
+}
+</code></pre><p>当你处于 strictPropertyInitialization 中时，需要使用显式类型注释以及明确的赋值断言（!）。</p><pre><code class="language-typescript">class Square {
+  // definite assignment assertion
+  //        v
+  sideLength!: number;
+  //         ^^^^^^^^
+  // type annotation
+  constructor(sideLength: number) {
+    this.initialize(sideLength);
+  }
+  initialize(sideLength: number) {
+    this.sideLength = sideLength;
+  }
+  get area() {
+    return this.sideLength ** 2;
+  }
+}
+</code></pre><h2>短路赋值运算符</h2><p>JavaScript 中有很多运算符都有对应的赋值运算符！但是有三个值得注意的例外：逻辑和（&amp;&amp;），逻辑或（||）和空值合并（??）。</p><p>所以 TypeScript 4.0 支持了一个新的 ECMAScript 特性，添加了三个新的赋值运算符：&amp;&amp;=，||=和??=。</p><p>这些运算符非常适合替换下面这种代码示例：</p><pre><code class="language-typescript">a = a &amp;&amp; b;
+a = a || b;
+a = a ?? b;
+</code></pre><p><strong>需要注意的是这些运算符仅在必要时执行赋值。从这个意义上讲，&quot;短路&quot;的不仅是运算符的右侧，赋值本身也短路了</strong>
+<strong>也就是说当左侧的值是假值，赋值一定会执行，左侧是真的值是，并不会赋值</strong></p><pre><code class="language-typescript">obj.prop ||= foo();
+// roughly equivalent to either of the following
+obj.prop || (obj.prop = foo());
+if (!obj.prop) {
+    obj.prop = foo();
+}
+</code></pre><h2>catch 子句绑定支持 unknown</h2><p>自 TypeScript 诞生以来，catch 子句变量始终按 any 类型化。这意味着 TypeScript 允许你对它们进行任何操作。
+因此，TypeScript 4.0 现在允许你将 catch 子句变量的类型指定为 unknown。unknown 比 any 更安全，因为它会在我们操作值之前提醒我们执行某种类型检查。</p><h2>属性重写访问器（反之亦然）是错误</h2><p>以前，只有在使用 useDefineForClassFields 时，属性重写访问器或访问器重写属性是一个错误；但现在，在派生类中声明一个将重写基类中的 getter 或 setter 的属性时总是发出错误。</p><pre><code class="language-typescript">class Base {
+  get foo() {
+    return 100;
+  }
+  set foo() {
+    // ...
+  }
+}
+class Derived extends Base {
+  foo = 10;
+  //  ~~~
+  // error!
+  // &#x27;foo&#x27; is defined as an accessor in class &#x27;Base&#x27;,
+  // but is overridden here in &#x27;Derived&#x27; as an instance property.
+}
+</code></pre><pre><code class="language-typescript">class Base {
+  prop = 10;
+}
+class Derived extends Base {
+  get prop() {
+    //  ~~~~
+    // error!
+    // &#x27;prop&#x27; is defined as a property in class &#x27;Base&#x27;, but is overridden here in &#x27;Derived&#x27; as an accessor.
+    return 100;
+  }
+}
+</code></pre><h2>delete 的操作数必须是可选的</h2><p>在 strictNullChecks 中使用 delete 运算符时，操作数现在必须为 any、unknown、never 或为可选（因为它在类型中包含 undefined）。否则，使用 delete 运算符是错误的。</p><pre><code class="language-typescript">interface Thing {
+  prop: string;
+}
+function f(x: Thing) {
+  delete x.prop;
+  //     ~~~~~~
+  // error! The operand of a &#x27;delete&#x27; operator must be optional.
+}
+</code></pre>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Typescript 4.1 常用新特性]]></title>
+        <id>typescript-4.1</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-4.1"/>
+        <updated>2021-12-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[模版字面量类型]]></summary>
+        <content type="html"><![CDATA[<h2>模版字面量类型</h2><pre><code class="language-typescript">type World = &quot;world&quot;;
+type Greeting = `hello ${World}`;
+// same as
+//   type Greeting = &quot;hello world&quot;;
+</code></pre><p>在替代位置有联合类型呢？它会生成可以由每个联合成员表示的所有可能的字符串字面量的集合。</p><pre><code class="language-typescript">type Color = &quot;red&quot; | &quot;blue&quot;;
+type Quantity = &quot;one&quot; | &quot;two&quot;;
+type SeussFish = `${Quantity | Color} fish`;
+// same as
+//   type SeussFish = &quot;one fish&quot; | &quot;two fish&quot;
+//                  | &quot;red fish&quot; | &quot;blue fish&quot;;5
+</code></pre><h2>映射类型中加入键重映射</h2><p>TypeScript 4.1 允许你使用新的 as 子句重新映射映射类型中的键。</p><pre><code class="language-typescript">type MappedTypeWithNewKeys&lt;T&gt; = {
+    [K in keyof T as NewKeyType]: T[K]
+    //            ^^^^^^^^^^^^^
+    //            This is the new syntax!
+}
+</code></pre><p>有了这个新的 as 子句，你可以利用模板字面量类型之类的特性，轻松地基于旧名称创建属性名称。</p><pre><code class="language-typescript">type Getters&lt;T&gt; = {
+    [K in keyof T as `get${Capitalize&lt;string &amp; K&gt;}`]: () =&gt; T[K]
+};
+interface Person {
+    name: string;
+    age: number;
+    location: string;
+}
+type LazyPerson = Getters&lt;Person&gt;
+// type LazyPerson = {
+//     getName: () =&gt; string;
+//     getAge: () =&gt; number;
+//     getLocation: () =&gt; string;
+// }
+</code></pre><pre><code class="language-typescript">// Remove the &#x27;kind&#x27; property
+type RemoveKindField&lt;T&gt; = {
+    [K in keyof T as Exclude&lt;K, &quot;kind&quot;&gt;]: T[K]
+};
+
+
+interface Circle {
+    kind: &quot;circle&quot;;
+    radius: number;
+}
+
+
+type KindlessCircle = RemoveKindField&lt;Circle&gt;;
+// same as
+//   type KindlessCircle = {
+//       radius: number;
+//   }
+</code></pre><h2>递归条件类型</h2><p>在 TypeScript 4.1 中，条件类型现在可以立即在其分支中引用自身，这样我们就更容易编写递归类型别名了
+如果我们想编写一个类型来获取嵌套数组的元素类型，则可以编写以下 deepFlatten 类型。</p><pre><code class="language-typescript">type ElementType&lt;T&gt; = T extends ReadonlyArray&lt;infer U&gt; ? ElementType&lt;U&gt; : T;
+
+function deepFlatten&lt;T extends readonly unknown[]&gt;(x: T): ElementType&lt;T&gt;[] {
+  throw &quot;not implemented&quot;;
+}
+
+// All of these return the type &#x27;number[]&#x27;:
+deepFlatten([1, 2, 3]);
+deepFlatten([[1], [2, 3]]);
+deepFlatten([[1], [[2]], [[[3]]]]);
+</code></pre><h2>any/unknown 在 falsy 位置传播</h2><p>以前，对于像 foo &amp;&amp; somethingElse 这样的表达式，foo 的类型是 any 或 unknown 的，整个表达式的类型将是 somethingElse 的类型。</p><pre><code class="language-typescript">declare let foo: unknown;
+declare let somethingElse: { someProp: string };
+let x = foo &amp;&amp; somethingElse; // { someProp: string }
+</code></pre><p>但在 TypeScript 4.1 中，我们会更谨慎地确定这种类型。由于对 &amp;&amp; 左侧的类型一无所知，因此我们将向外传播 any 和 unknown，而不是将右侧的类型传播出去。</p><pre><code class="language-typescript">declare let foo: unknown;
+declare let somethingElse: { someProp: string };
+let x = foo &amp;&amp; somethingElse; // unknown
+</code></pre><h2>条件 spread 创建可选属性</h2><p>在 JavaScript 中，对象 spread（例如{ ...foo }）不会对虚假值起作用。因此，在类似{ ...foo }的代码中，如果 foo 为 null 或 undefined，则会跳过 foo。</p><pre><code class="language-typescript">interface Person {
+    name: string;
+    age: number;
+    location: string;
+}
+interface Animal {
+    name: string;
+    owner: Person;
+}
+function copyOwner(pet?: Animal) {
+    return {
+        ...(pet &amp;&amp; pet.owner),
+        otherStuff: 123
+    }
+}
+// We could also use optional chaining here:
+function copyOwner(pet?: Animal) {
+    return {
+        ...(pet?.owner),
+        otherStuff: 123
+</code></pre><p>在这里，如果定义了 pet，则 pet.owner 的属性将被 spread 进去；否则，不会将任何属性 spread 到返回的对象中。
+copyOwner 的返回类型以前是基于每个 spread 的联合类型：</p><pre><code class="language-typescript">{ otherStuff: number } | { otherStuff: number, name: string, age: number, location: string }
+</code></pre><p>在 TypeScript 4.1 中，返回的类型改为使用 all-optional 属性。</p><pre><code class="language-typescript">{
+    otherStuff: number;
+    name?: string;
+    age?: number;
+    location?: string;
+}
+</code></pre><h2>在 Promise 中，resolve 的参数不再可选</h2><p>但有时确实需要在没有参数的情况下调用 resolve()。在这些情况下，我们可以给 Promise 一个显式的 void 泛型类型参数（即将其写为 <code>Promise&lt;void&gt;</code>）。这利用了 TypeScript 4.1 中的新功能，其中可能是 void 的尾随参数可以变为可选。</p><pre><code class="language-typescript">new Promise&lt;void&gt;(resolve =&gt; {
+  //     ^^^^^^
+  doSomethingAsync(() =&gt; {
+    doSomething();
+    resolve();
+  });
+});
+</code></pre>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Typescript 4.2 常用新特性]]></title>
+        <id>typescript-4.2</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-4.2"/>
+        <updated>2021-12-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[元组类型中的前导 / 中间剩余元素]]></summary>
+        <content type="html"><![CDATA[<h2>元组类型中的前导 / 中间剩余元素</h2><p>每个元组只有一个剩余元素，并且剩余元素后面不能有可选元素。</p><pre><code class="language-typescript">interface Clown {
+  /*...*/
+}
+interface Joker {
+  /*...*/
+}
+let StealersWheel: [...Clown[], &quot;me&quot;, ...Joker[]];
+// ~~~~~~~~~~ Error!
+// A rest element cannot follow another rest element.
+let StringsAndMaybeBoolean: [...string[], boolean?];
+// ~~~~~~~~ Error!
+// An optional element cannot follow a rest element.
+</code></pre><p>这些没有后缀的剩余元素可以被用来对采用任意数量的前导参数（后面跟几个固定参数）的函数进行建模。</p><pre><code class="language-typescript">declare function doStuff(...args: [...names: string[], shouldCapitalize: boolean]): void;
+doStuff(/*shouldCapitalize:*/ false)
+doStuff(&quot;fee&quot;, &quot;fi&quot;, &quot;fo&quot;, &quot;fum&quot;, /*shouldCapitalize:*/ true);
+</code></pre><h2>针对 in 操作符的更严格的检查</h2><p>在 JavaScript 中，在 in 操作符右侧使用一个非对象类型是一个运行时错误。TypeScript 4.2 确保这可以在设计时发现这个错误。</p><pre><code class="language-typescript">&quot;foo&quot; in 42;
+// ~~
+// error! The right-hand side of an &#x27;in&#x27; expression must not be a primitive.
+</code></pre><h2>解构变量可以显式标记为未使用</h2><p>你现在可以通过在解构变量前增加一个下划线（<!-- -->_<!-- -->字符），来将解构变量标记为未使用。</p><pre><code class="language-typescript">let [_first, second] = getValues();
+</code></pre><p>以前，如果<!-- -->_<!-- -->first 以后从未使用过，TypeScript 会报一个 noUnusedLocals 错误。现在，TypeScript 将意识到，<!-- -->_<!-- -->first 是故意用下划线命名的，因为没有使用它的意图。</p><h2>可选属性和字符串索引符号之间的宽松规则</h2><p>TypeScript 的早期版本认为对象的可选属性不能用兼容索引符号赋值。TypeScript 4.2 允许这种赋值。
+下面的代码在 4.2 版本中可以正常运行</p><pre><code class="language-typescript">type WesAndersonWatchCount = {
+  &quot;Fantastic Mr. Fox&quot;?: number;
+  &quot;The Royal Tenenbaums&quot;?: number;
+  &quot;Moonrise Kingdom&quot;?: number;
+  &quot;The Grand Budapest Hotel&quot;?: number;
+};
+declare const wesAndersonWatchCount: WesAndersonWatchCount;
+const movieWatchCount: { [key: string]: number } = wesAndersonWatchCount;
+// ~~~~~~~~~~~~~~~ error!
+// Type &#x27;WesAndersonWatchCount&#x27; is not assignable to type &#x27;{ [key: string]: number; }&#x27;.
+// Property &#x27;&quot;Fantastic Mr. Fox&quot;&#x27; is incompatible with index signature.
+// Type &#x27;number | undefined&#x27; is not assignable to type &#x27;number&#x27;.
+// Type &#x27;undefined&#x27; is not assignable to type &#x27;number&#x27;. (2322)
+</code></pre><p>然而，4.2 版本中字符串索引类型不允许对类型中 undefined 的非可选属性进行赋值，也不允许将 undefined 写到特定键：</p><pre><code class="language-typescript">type BatmanWatchCount = {
+  &quot;Batman Begins&quot;: number | undefined;
+  &quot;The Dark Knight&quot;: number | undefined;
+  &quot;The Dark Knight Rises&quot;: number | undefined;
+};
+declare const batmanWatchCount: BatmanWatchCount;
+// Still an error in TypeScript 4.2.
+// `undefined` is only ignored when properties are marked optional.
+const movieWatchCount: { [key: string]: number } = batmanWatchCount;
+// Still an error in TypeScript 4.2.
+// Index signatures don&#x27;t implicitly allow explicit `undefined`.
+movieWatchCount[&quot;It&#x27;s the Great Pumpkin, Charlie Brown&quot;] = undefined;
+</code></pre><p>新规则也不适用于数字索引符号，因为它们被假定为类似数组且密集的：</p><pre><code class="language-typescript">declare let sortOfArrayish: { [key: number]: string };
+declare let numberKeys: { 42?: string };
+// Error! Type &#x27;{ 42?: string | undefined; }&#x27; is not assignable to type &#x27;{ [key: number]: string; }&#x27;.
+sortOfArrayish = numberKeys;
+</code></pre>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Typescript 4.3 常用新特性]]></title>
+        <id>typescript-4.3</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-4.3"/>
+        <updated>2021-12-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[override 和 --noImplicitOverride 标志]]></summary>
+        <content type="html"><![CDATA[<h2>override 和 --noImplicitOverride 标志</h2><p>当一个方法被标记为 override 时，TypeScript 将始终确保基类中存在一个具有相同名称的方法。</p><pre><code class="language-typescript">class SomeComponent {
+  setVisible(value: boolean) {
+    // ...
+  }
+}
+class SpecializedComponent extends SomeComponent {
+  override show() {
+  // ~~~~~~~~
+  // Error! This method can&#x27;t be marked with &#x27;override&#x27; because it&#x27;s not declared in &#x27;SomeComponent&#x27;.
+  // ...
+  }
+  // ...
+}
+</code></pre><p>TypeScript 4.3 还提供了一个新的 --noImplicitOverride 标志。启用此选项时，除非你显式使用一个 override 关键字，否则重写一个超类中的任何方法将生成错误。</p><h2>永远 truthy 的 promise 检查</h2><p>在 strictNullChecks 下，检查一个条件中的一个 Promise 是否“真实”会触发错误。</p><pre><code class="language-typescript">async function foo(): Promise&lt;boolean&gt; {
+  return false;
+}
+async function bar(): Promise&lt;string&gt; {
+  if (foo()) {
+    // ~~~~~
+    // Error!
+    // This condition will always return true since
+    // this &#x27;Promise&lt;boolean&gt;&#x27; appears to always be defined.
+    // Did you forget to use &#x27;await&#x27;?
+    return &quot;true&quot;;
+  }
+  return &quot;false&quot;;
+}
+</code></pre><h2>static 索引签名</h2><p>索引签名使我们可以在一个值上设置比一个类型显式声明更多的属性。</p><pre><code class="language-typescript">class Foo {
+  hello = &quot;hello&quot;;
+  world = 1234;
+  // This is an index signature:
+  [propName: string]: string | number | undefined;
+}
+let instance = new Foo();
+// Valid assigment
+instance[&quot;whatever&quot;] = 42;
+// Has type &#x27;string | number | undefined&#x27;.
+let x = instance[&quot;something&quot;];
+</code></pre><p>之前，索引签名只能在类的实例侧声明。现在我们可以将索引签名声明为 static。</p><pre><code class="language-typescript">class Foo {
+  static hello = &quot;hello&quot;;
+  static world = 1234;
+  static [propName: string]: string | number | undefined;
+}
+// Valid.
+Foo[&quot;whatever&quot;] = 42;
+// Has type &#x27;string | number | undefined&#x27;
+let x = Foo[&quot;something&quot;];
+</code></pre>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Typescript 4.4 常用新特性]]></title>
+        <id>typescript-4.4</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-4.4"/>
+        <updated>2021-12-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[用于 Aliased 条件的控制流分析]]></summary>
+        <content type="html"><![CDATA[<h2>用于 Aliased 条件的控制流分析</h2><pre><code class="language-typescript">function foo(arg: unknown) {
+  if (typeof arg === &quot;string&quot;) {
+    // We know this is a string now.
+    console.log(arg.toUpperCase());
+  }
+}
+</code></pre><p>在这个例子中，我们检查了 arg 是否是一个 string。TypeScript 识别了 typeof arg === &quot;string&quot;这个检查，认为它是一个类型保护，并且能够确定 arg 应该是 if 块主体中的一个 string。但是，如果我们将条件移出为一个常量会发生什么？</p><pre><code class="language-typescript">function foo(arg: unknown) {
+  const argIsString = typeof arg === &quot;string&quot;;
+  if (argIsString) {
+    console.log(arg.toUpperCase());
+    //              ~~~~~~~~~~~
+    // Error! Property &#x27;toUpperCase&#x27; does not exist on type &#x27;unknown&#x27;.
+  }
+}
+</code></pre><p>在以前的 TypeScript 版本中，这将抛出一个错误——即使 argIsString 被分配了类型保护的值也是如此，TypeScript 把这些信息丢掉了。这会很麻烦，因为我们可能想在多个位置重复使用相同的检查。为了解决这个问题，用户往往需要重复自己做过的事情或使用类型断言（cast）。在 TypeScript 4.4 中情况不再如此了。上面的例子不会再抛出错误！当 TypeScript 看到我们正在测试一个常量值时，它会做一些额外的工作来看看它是否包含类型保护。如果这个类型保护对 const、readonly 属性或未修改的参数进行操作，则 TypeScript 能够适当地缩小该值。
+新版保留了各种类型保护条件——不仅仅是 typeof 检查。例如，可辨识联合类型现在很容易检查了。</p><pre><code class="language-typescript">type Shape =
+  | { kind: &quot;circle&quot;; radius: number }
+  | { kind: &quot;square&quot;; sideLength: number };
+
+function area(shape: Shape): number {
+  const isCircle = shape.kind === &quot;circle&quot;;
+  if (isCircle) {
+    // We know we have a circle here!
+    return Math.PI * shape.radius ** 2;
+  } else {
+    // We know we&#x27;re left with a square here!
+    return shape.sideLength ** 2;
+  }
+}
+</code></pre><h2>符号和模板字符串模式索引签名</h2><p>索引签名非常有用,然而到目前为止，它们仅限于 string 和 number 键（并且 string 索引签名有一个人为的怪癖，它们可以接受 number 键，因为无论如何它们都会被强制转换为字符串）。这意味着 TypeScript 不允许使用 symbol 键索引对象。TypeScript 也无法对某些 string 键的子集建模索引签名
+TypeScript 4.4 解决了这些限制，并允许 symbol 和模板字符串模式的索引签名。</p><pre><code class="language-typescript">interface Colors {
+  [sym: symbol]: number;
+}
+const red = Symbol(&quot;red&quot;);
+const green = Symbol(&quot;green&quot;);
+const blue = Symbol(&quot;blue&quot;);
+let colors: Colors = {};
+colors[red] = 255; // Assignment of a number is allowed
+let redVal = colors[red]; // &#x27;redVal&#x27; has the type &#x27;number&#x27;
+colors[blue] = &quot;da ba dee&quot;; // Error: Type &#x27;string&#x27; is not assignable to type &#x27;number&#x27;.
+</code></pre><p>类似地，我们可以使用模板字符串模式类型编写索引签名。这种做法的一种可能用途是从 TypeScript 的多余属性检查中排除以 data-开头的属性。</p><pre><code class="language-typescript">interface Options {
+    width?: number;
+    height?: number;
+}
+let a: Options = {
+    width: 100,
+    height: 100,
+    &quot;data-blah&quot;: true, // Error! &#x27;data-blah&#x27; wasn&#x27;t declared in &#x27;Options&#x27;.
+};
+interface OptionsWithDataProps extends Options {
+    // Permit any property starting with &#x27;data-&#x27;.
+    [optName: `data-${string}`]: unknown;
+}
+let b: OptionsWithDataProps = {
+    width: 100,
+    height: 100,
+    &quot;data-blah&quot;: true,       // Works!
+    &quot;unknown-property&quot;: true,  // Error! &#x27;unknown-property&#x27; wasn&#x27;t declared in &#x27;OptionsWithDataProps&#x27;.
+};
+</code></pre><p>关于索引签名最后还要提一下，它们现在允许联合类型：</p><ul><li>string</li><li>number</li><li>symbol</li><li>模板字符串模式（例如 hello-\${string}）</li></ul><p>如果一个索引签名的参数是这些类型的联合，它将扁平化为几个不同的索引签名。</p><pre><code class="language-typescript">interface Data {
+  [optName: string | symbol]: any;
+}
+// Equivalent to
+interface Data {
+  [optName: string]: any;
+  [optName: symbol]: any;
+}
+</code></pre><h2>精确的可选属性类型（--exactOptionalPropertyTypes）</h2><pre><code class="language-typescript">interface Person {
+  name: string;
+  age?: number;
+}
+</code></pre><p>等价于</p><pre><code class="language-typescript">interface Person {
+  name: string;
+  age: number | undefined;
+}
+</code></pre><p>这意味着用户可以显式用 undefined 代替 age。</p><pre><code class="language-typescript">const p: Person = {
+  name: &quot;Daniel&quot;,
+  age: undefined // This is okay by default.
+};
+</code></pre><p>在 TypeScript 4.4 中新加入的标志--exactOptionalPropertyTypes 指定了可选属性类型应完全按照编写的方式来解释，这意味着|undefined 不会添加到类型中：</p><pre><code class="language-typescript">// With &#x27;exactOptionalPropertyTypes&#x27; on:
+const p: Person = {
+  name: &quot;Daniel&quot;,
+  age: undefined // Error! undefined isn&#x27;t a number
+};
+</code></pre><p>这个标志不是--strict 系列的一部分，如果你想要这种行为，需要显式打开它。它还需要启用--strictNullChecks。</p><h2>抽象属性不允许初始化</h2><pre><code class="language-typescript">abstract class C {
+  abstract prop = 1;
+  //       ~~~~
+  // Property &#x27;prop&#x27; cannot have an initializer because it is marked abstract.
+}
+</code></pre><p>相反，你只能为这个属性指定一个类型：</p><pre><code class="language-typescript">abstract class C {
+  abstract prop: number;
+}
+</code></pre>]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[Typescript 4.5 常用新特性]]></title>
+        <id>typescript-4.5</id>
+        <link href="https://guoxiaxing.github.io/Blog/typescript/typescript-4.5"/>
+        <updated>2021-12-06T00:00:00.000Z</updated>
+        <summary type="html"><![CDATA[Awaited 类型与 Promise 改进]]></summary>
+        <content type="html"><![CDATA[<h2>Awaited 类型与 Promise 改进</h2><p>TypeScript 4.5 引入了一种新的实用程序类型： Awaited 类型，获取 promise 的返回值类型</p><ul><li>递归解包</li><li>不依赖 PromiseLike 更稳健</li><li>利用 <code>Awaited&lt;T&gt;</code> ，为 <code>Promise.all</code> 、 <code>Promise.race</code> 、 <code>Promise.allSettled</code> 和 <code>Promise.any</code> 增加重载</li></ul><pre><code class="language-typescript">// type is string
+type basic = Awaited&lt;Promise&lt;string&gt;&gt;;
+// type is string
+type recursive = Awaited&lt;Promise&lt;Promise&lt;string&gt;&gt;&gt;;
+// type is boolean
+type nonThenObj = Awaited&lt;boolean&gt;;
+// type is string | Date
+type unions = Awaited&lt;Date | Promise&lt;Promise&lt;string&gt;&gt;&gt;;
+type FakePromise = { then: () =&gt; string };
+// type is never
+type fake = Awaited&lt;FakePromise&gt;;
+</code></pre><h2>其他新特性</h2><ul><li><p>引入 es2022 模块：TypeScript 现在支持一个新的模块设置：es2022。es2022 模块的主要功能是顶层 await，意味着开发者可以在 async 函数之外使用 await。这在模块 esnext（以及现在的模块 nodenext）中已经得到支持，但 es2022 是这个功能的第一个稳定目标。</p></li><li><p>支持 import 断言：TypeScript 4.5 支持 ECMAScript 关于导入断言的提议，这是运行时使用的一种语法，以确保导入有一个预期的格式。</p></li><li><p>私有字段检查：开发人员现在可以编写一个具有 #private 字段成员的类，并使用 in 运算符查看另一个对象是否具有相同的字段，以用于检查对象上是否具有私有字段。</p></li></ul>]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Typescript 3.7 常用新特性]]></title>
         <id>typescript-3.7</id>
