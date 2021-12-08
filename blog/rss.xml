@@ -4,9 +4,46 @@
         <title>Try's Blog Blog</title>
         <link>https://guoxiaxing.github.io/Blog/blog</link>
         <description>Try's Blog Blog</description>
-        <lastBuildDate>Tue, 07 Dec 2021 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 08 Dec 2021 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[硬链接和符号链接]]></title>
+            <link>https://guoxiaxing.github.io/Blog/blog/hard-link-and-symbolic-link</link>
+            <guid>hard-link-and-symbolic-link</guid>
+            <pubDate>Wed, 08 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[Linux 的链接概念]]></description>
+            <content:encoded><![CDATA[<h2>Linux 的链接概念</h2><p>Linux 链接分两种，一种被称为硬链接（Hard Link），另一种被称为符号链接（Symbolic Link）。默认情况下，ln 命令产生硬链接。</p><p>通俗一点理解，可以把硬链接当成源文件的副本，他和源文件一样的大小但是事实上却不占任何空间。
+符号链接可以理解为类似 windows 一样的快捷方式。</p><h2>硬链接</h2><p>硬连接指通过索引节点来进行连接。
+在 Linux 的文件系统中，保存在磁盘分区中的文件不管是什么类型都给它分配一个编号，称为索引节点号(Inode Index)。
+在 Linux 中，多个文件名指向同一索引节点是存在的。一般这种连接就是硬连接。
+硬连接的作用是允许一个文件拥有多个有效路径名，这样用户就可以建立硬连接到重要文件，以防止“误删”的功能。其原因如上所述，因为对应该目录的索引节点有一个以上的连接。只删除一个连接并不影响索引节点本身和其它的连接，只有当最后一个连接被删除后，文件的数据块及目录的连接才会被释放。也就是说，文件真正删除的条件是与之相关的所有硬连接文件均被删除。</p><pre><code class="language-bash">ln existfile  newfile # 创建硬链接
+</code></pre><p>硬链接文件有两个限制</p><ul><li>不允许给目录创建硬链接</li><li>只允许在同一文件系统中的文件之间才能创建链接</li></ul><p>对于硬链接文件进行读写和删除操作的时候，结果和符号链接相同。但是如果我们删除硬链接文件的源文件，硬链接文件仍存在，而且保留了原有的内容。</p><h2>符号链接</h2><p>另外一种连接称之为符号连接（Symbolic Link），也叫软连接。软链接文件有类似于 Windows 的快捷方式。它实际上是一个特殊的文件。在符号连接中，文件实际上是一个文本文件，这个文件包含了另一个文件的路径名。
+可以是任意文件或目录，也可以链接不同文件系统的文件。甚至可以链接不存在的文件，这就产生一般称为“断裂”的问题（现象），还可以不断的循环链接自己。
+在对符号链接进行读写操作的时候，系统会自动把该操作转换为对源文件的操作。但是删除链接文件时，系统仅仅删除符号链接文件，而不删除源文件本身。</p><pre><code class="language-bash">ln -s source_file  softlink_file # 创建符号链接
+</code></pre><h2>实验一下</h2><pre><code class="language-bash">$ touch f1          #创建一个测试文件f1
+$ ln f1 f2          #创建f1的一个硬连接文件f2
+$ ln -s f1 f3       #创建f1的一个符号连接文件f3
+$ ls -li            # -i参数显示文件的inode节点信息
+total 0
+7722708 -rw-r--r--  2 oracle oinstall 0 Apr 21 08:11 f1
+7722708 -rw-r--r--  2 oracle oinstall 0 Apr 21 08:11 f2
+7722757 lrwxrwxrwx  1 oracle oinstall 2 Apr 21 08:11 f3 -&gt; f1
+</code></pre><p>从上面的结果中可以看出，硬连接文件 f2 与原文件 f1 的 inode 节点相同，均为 7722708，然而符号连接文件的 inode 节点不同。</p><pre><code class="language-text">$ echo &quot;I am f1 file&quot; &gt;&gt;f1
+$ cat f1
+I am f1 file
+$ cat f2
+I am f1 file
+$ cat f3
+I am f1 file
+$ rm -f f1
+$ cat f2
+I am f1 file
+cat f3
+cat: f3: No such file or directory
+</code></pre><p>通过上面的测试可以看出：当删除原始文件 f1 后，硬连接 f2 不受影响，但是符号连接 f1 文件无效</p><h2>硬链接和符号链接的区别</h2><ul><li>硬链接仅能链接文件，而符号链接可以链接目录</li><li>硬链接在链接完成后仅和文件内容关联，和之前链接的文件没有任何关系。而符号链接始终和之前链接的文件关联，和文件内容不直接相关。</li></ul><h2>总结</h2><ul><li><p>删除符号连接 f3,对 f1,f2 无影响；</p></li><li><p>删除硬连接 f2，对 f1,f3 也无影响；</p></li><li><p>删除原文件 f1，对硬连接 f2 没有影响，导致符号连接 f3 失效；</p></li><li><p>同时删除原文件 f1,硬连接 f2，整个文件会真正的被删除。</p></li></ul><p>符号链接（symbolic link）在建立的时候建立了一个新的 inode，并记录了指向源文件 inode 的路径。所以 symbolic 的 inode number 跟原始档案的 inode number 是不一样的。这也是为什么 symbolic link 能够跨越不同文件系统的原因。
+符号链接建立了新的 inode number，所以它是一个真实的文件并占有一定的磁盘空间。另外对 symbolic link 的操作除了删除都会直接对源文件进行操作。</p><p>hard link 的 inode number 跟源文件的 inode number 是一样的。因为一个文件系统有着相同的 inode number，所以 hard link 是不可以跨文件系统创建的。也可以将 hard link 理解为不是一个文件，把它看成是同一个 inode 的别名，建立 hard link 后他和源文件互为别名，删除其中任何一个，inode 都不会释放。只有指向同一 inode 的文件名都删除后，inode 才释放。hard link 实际上是不占空间的。</p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[关于 line-height 属性]]></title>
             <link>https://guoxiaxing.github.io/Blog/blog/line-height</link>
@@ -14,6 +51,133 @@
             <pubDate>Tue, 07 Dec 2021 00:00:00 GMT</pubDate>
             <description><![CDATA[- 没给元素设置高度时，元素高度采用的是 line-height 的高度，这个属性具有继承性。也自带默认值，所以当你给一个没有设置高度的元素设置 line-height:0;即使里面有文本，它也是会塌陷的。]]></description>
             <content:encoded><![CDATA[<ul><li><p>没给元素设置高度时，元素高度采用的是 line-height 的高度，这个属性具有继承性。也自带默认值，所以当你给一个没有设置高度的元素设置 line-height:0;即使里面有文本，它也是会塌陷的。</p></li><li><p>可以分为好几种盒子，当你设置 line-height 的时候，行内框是不会变化的，改变的是行距，它只由 font-size 的决定。这其实就是上边元素 height 等于 line-height 的时候，元素内文本会垂直居中的原因。</p></li><li><p>取值为 number 时，line-height 为 number 乘以当前元素的 font-size,取 normal 时一般就是 number 为 1.2</p></li></ul>]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[peerDependencies]]></title>
+            <link>https://guoxiaxing.github.io/Blog/blog/peerDependencies</link>
+            <guid>peerDependencies</guid>
+            <pubDate>Tue, 07 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[为什么会研究这个 peerDependencies？]]></description>
+            <content:encoded><![CDATA[<h2>为什么会研究这个 peerDependencies？</h2><p>因为我在我们的组的组件库的<code>package.json</code>中看到了这个，然后我就发现这里面的依赖都是在我们项目中中也需要使用的。
+而且我们的组件库是基于 angular 的，但是它并没有将 angular 作为 dependencies。
+然后我又去看了看一些第三方的组件库或者是插件，我发现他们都没有将一些核心库（react、vue、angular、jquery）作为直接依赖，而是只是将他们添加到了 peerDependencies 中，这让我想知道，peerDependencies 到底是干什么的？</p><h2>我们希望我们使用的插件或者是第三方库对于和项目中共同的依赖有什么表现呢？</h2><p>在我开发的 packageA 里面依赖的 react 和 react-dom 的版本号应该和主系统中安装的 react 和 react-dom 的版本号保持一致，并且 packageA 被安装到主系统中之后，就应该依赖于主系统中的 react 和 react-dom。</p><h2>说说 peerDependencies</h2><p>同等依赖，或者叫同伴依赖，用于指定当前包（也就是你写的包）兼容的宿主版本。用于解决插件与所依赖包不一致的问题。</p><p><code>peerDependencies</code> 在我们进行一些插件开发的时候会经常用到，比如 antd 的开发依赖于 React</p><p>总结一下特点：</p><ul><li><p>插件正确运行的前提是，核心依赖库必须先下载安装，不能脱离核心依赖库而被单独依赖并引用；</p></li><li><p>插件入口 api 的设计必须要符合核心依赖库的规范；</p></li><li><p>插件的核心逻辑运行在依赖库的调用中；</p></li><li><p>在项目实践中，同一插件体系下，核心依赖库版本最好是相同的；</p></li></ul><p>听起来可能没有那么好理解，举个例子来说明下。antd 只是提供了一套基于 react 的 ui 组件库，但它要求宿主环境需要安装指定的 react 版本，所以你可以看到 node_modules 中 antd 的 package.json 中有这么一项配置:</p><pre><code class="language-json">&quot;peerDependencies&quot;: {
+    &quot;react&quot;: &quot;&gt;=16.0.0&quot;,
+    &quot;react-dom&quot;: &quot;&gt;=16.0.0&quot;
+},
+</code></pre><p>它要求宿主环境安装大于等于 16.0.0 版本的 react，也就是 antd 的运行依赖宿主环境提供的该范围的 react 安装包。</p><blockquote><p>在安装插件的时候，peerDependencies 在 npm 2.x 和 npm 3.x 中表现不一样。npm2.x 会自动安装同等依赖，npm3.x 不再自动安装，会产生警告！手动在 package.json 文件中添加依赖项可以解决。</p></blockquote><p>当别人使用我们的插件时，<code>peerDependencies</code>就会告诉明确告诉使用方，你需要安装该插件哪个宿主版本。
+通常情况下，我们会在一个项目里使用一个宿主（比如 gulp）的很多插件，如果相互之间存在宿主不兼容，在执行<code>npm install</code>时，cli 会抛出错误信息来告诉我们，比如：</p><pre><code class="language-text">npm ERR! peerinvalid The package gulp does not satisfy its siblings&#x27; peerDependencies requirements!
+npm ERR! peerinvalid Peer gulp-cli-config@0.1.3 wants gulp@~3.1.9
+npm ERR! peerinvalid Peer gulp-cli-users@0.1.4 wants gulp@~2.3.0
+</code></pre><p>当你安装一个包时，其 dependencies 和 devDependencies 会被 npm 自动安装。</p><p>peerDependencies 则有所不同，它们不会被自动安装。</p><p>当一个依赖项 c 被列在某个包 b 的 peerDependency 中时，它就不会被自动安装。取而代之的是，包含了 b 包的代码库 a 则必须将对应的依赖项 c 包含为其依赖。</p><h3>举例说说</h3><p>假设现在有一个 <code>helloWorld</code> 工程,已经在其 <code>package.json</code> 的 <code>dependencies</code> 中声明了 <code>packageA</code>，有两个插件 <code>plugin1</code> 和 <code>plugin2</code> 他们也依赖 <code>packageA</code>，如果在插件中使用 <code>dependencies</code> 而不是 <code>peerDependencies</code> 来声明 <code>packageA</code>，那么 <code>$ npm install</code> 安装完 <code>plugin1</code> 和 <code>plugin2</code> 之后的依赖图是这样的：(前提是依赖的 packageA 的版本都不同)</p><pre><code class="language-text">.
+├── helloWorld
+│   └── node_modules
+│       ├── packageA
+│       ├── plugin1
+│       │   └── nodule_modules
+│       │       └── packageA
+│       └── plugin2
+│       │   └── nodule_modules
+│       │       └── packageA
+</code></pre><p>从上面的依赖图可以看出，<code>helloWorld</code> 本身已经安装了一次<code>packageA</code>，但是因为因为在
+<code>plugin1</code> 和 <code>plugin2</code> 中的 <code>dependencies</code> 也声明了 <code>packageA</code>，所以最后 <code>packageA</code> 会被安装三次，有两次安装是冗余的。</p><p><strong>需要注意的是 npm 现在对于依赖版本相同的包会在 install 的时候自动扁平化（npm v3 之后是这么做的），也就是说，当多个 package 依赖了相同的包且他们的版本也相同的时候，仅仅会在项目的根 node_modules 下安装一份</strong></p><p>而 <code>peerDependency</code> 就可以避免类似的<strong>核心依赖库</strong>被重复下载的问题。</p><p>如果在 <code>plugin1</code> 和 <code>plugin2</code> 的 <code>package.json</code> 中使用 <code>peerDependency</code> 来声明核心依赖库，例如：</p><p>plugin1/package.json</p><pre><code class="language-json">{
+  &quot;peerDependencies&quot;: {
+    &quot;packageA&quot;: &quot;1.0.1&quot;
+  }
+}
+</code></pre><p>plugin2/package.json</p><pre><code class="language-json">{
+  &quot;peerDependencies&quot;: {
+    &quot;packageA&quot;: &quot;1.0.1&quot;
+  }
+}
+</code></pre><p>在主系统中声明一下 packageA:</p><p>helloWord/package.json</p><pre><code class="language-json">{
+  &quot;dependencies&quot;: {
+    &quot;packageA&quot;: &quot;1.0.1&quot;
+  }
+}
+</code></pre><p>此时在主系统中执行 <code>$ npm install</code> 生成的依赖图就是这样的：</p><pre><code class="language-text">.
+├── helloWorld
+│   └── node_modules
+│       ├── packageA
+│       ├── plugin1
+│       └── plugin2
+</code></pre><p>可以看到这时候生成的依赖图是扁平的，packageA 也只会被安装一次。</p><p>总结下在插件使用 <code>peerDependency</code> 声明依赖库的特点：</p><ul><li>如果用户显式依赖了核心库，则可以忽略各插件的 <code>peerDependency</code> 声明；</li><li>如果用户没有显式依赖核心库，则按照插件 <code>peerDependencies</code> 中声明的版本将库安装到项目根目录中；</li><li>当用户依赖的版本、各插件依赖的版本之间不相互兼容，会报错让用户自行修复；</li></ul>]]></content:encoded>
+        </item>
+        <item>
+            <title><![CDATA[pnpm又是什么？]]></title>
+            <link>https://guoxiaxing.github.io/Blog/blog/pnpm</link>
+            <guid>pnpm</guid>
+            <pubDate>Tue, 07 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[为什么有 pnpm？]]></description>
+            <content:encoded><![CDATA[<h2>为什么有 pnpm？</h2><h3>节约磁盘空间并提升安装速度 ​</h3><p>当使用 npm 或 Yarn 时，如果你有 100 个项目使用了某个依赖，就会有 100 份该依赖的副本保存在硬盘上。 对于 pnpm ，依赖项将存储在一个内容可寻址的仓库中，因此：</p><ul><li><p>如果你用到了某依赖项的不同版本，那么只会将有差异的文件添加到仓库。 例如，如果某个包有 100 个文件，而它的新版本只改变了其中 1 个文件。那么 pnpm update 时只会向存储中心额外添加 1 个新文件，而不会因为仅仅一个文件的改变复制整新版本包的内容。</p></li><li><p>所有文件都会存储在硬盘上的某一位置。 当软件包被被安装时，包里的文件会硬链接到这一位置，而不会占用额外的磁盘空间。 这允许你跨项目地共享同一版本的依赖。</p></li></ul><h3>创建非扁平化的 node_modules 文件夹 ​</h3><p>当使用 npm 安装依赖时，所有的依赖都会被提升到模块的根目录。 因此，项目可以访问到未被添加进当前项目的依赖。</p><p>pnpm 使用软链的方式将项目的直接依赖添加进模块文件夹的根目录。</p><h2>依赖管理</h2><h3>hard link 机制</h3><p>hard link 使得用户可以通过不同的路径引用方式去找到某个文件。pnpm 会在<strong>全局的 store 目录里存储项目 node_modules 文件的 hard links</strong> 。</p><p>所以全局的 store 中存放的是我们所有项目依赖的包的信息的 hard links，用于在二次下载的时候进行版本的检测</p><p>关于什么是硬连接和软链接，可以看看我的另一篇文章：<a href="https://guoxiaxing.github.io/Blog/blog/hard-link-and-symbolic-link">硬链接和符号链接</a></p><h3>Store 目录</h3><p>一般 store 目录默认是设置在 \${os.homedir}/.pnpm-store 这个目录下
+当然用户也可以在 .npmrc 设置这个 store 目录位置，不过一般而言 store 目录对于用户来说感知程度是比较小的。
+因为这样一个机制，导致每次安装依赖的时候，如果是个相同的依赖，有好多项目都用到这个依赖，那么这个依赖实际上最优情况(即版本相同)只用安装一次。
+如果是 npm 或 yarn，那么这个依赖在多个项目中使用，在每次安装的时候都会被重新下载一次。
+pnpm 对项目安装依赖的时候，如果某个依赖在 sotre 目录中存在了话，那么就会直接从 store 目录里面去 hard-link，避免了二次安装带来的时间消耗，如果依赖在 store 目录里面不存在的话，就会去下载一次。</p><h3>node_modules 结构</h3><p>pnpm 目前的 node_modules 的一些文件结构，例如在项目中使用 pnpm 安装了一个叫做 express 的依赖，那么最后会在 node_modules 中形成这样两个目录结构:</p><pre><code class="language-text">node_modules/express/...
+node_modules/.pnpm/express@4.17.1/node_modules/xxx
+</code></pre><p>其中第一个路径是 nodejs 正常寻找路径会去找的一个目录，如果去查看这个目录下的内容，会发现里面连个 node_modules 文件都没有：</p><pre><code class="language-text">▾ express
+    ▸ lib
+      History.md
+      index.js
+      LICENSE
+      package.json
+      Readme.md
+</code></pre><p>实际上这个文件只是个软连接，它会形成一个到第二个目录的一个软连接(类似于软件的快捷方式)，这样 node 在找路径的时候，最终会找到 .pnpm 这个目录下的内容。
+其中这个 .pnpm 是个虚拟磁盘目录，然后 <strong>express 这个依赖的一些依赖</strong>会被平铺到 .pnpm/<a href="mailto:express@4.17.1">express@4.17.1</a>/node_modules/ 这个目录下面（包括 express 本身），这样保证了依赖能够 require 到，同时也不会形成很深的依赖层级。在保证了 nodejs 能找到依赖路径的基础上，同时也很大程度上保证了依赖能很好的被放在一起。
+<strong>也就是说项目依赖的包的依赖包只会在.pnpm/包名/node_modules/下（但是还是只会安装一份，只要是多个依赖包的依赖是版本相同的，只会安装一个包，每个.pnpm/包名/node_modules/存放的其实是一个全局 store 中对应包源代码的 hard link），不会再被扁平化到根 node_modules 下，避免了一个不是项目显示依赖的包但是我们却可以使用的问题（即幽灵依赖）</strong></p><p><strong>总结一下：✏️ 对于 pnpm 的 node_modules 下的包名下存放的其实是一个软链接，连接到 node_modules 下的.pnpm/包名/node_modules/xxx 该目录下存放的是该依赖包的依赖以及该依赖包本身，每个包里面都存放了一个全局 store 中对应包源代码的 hard link。每个项目的 node_modules 下都存放的是一些 link</strong></p><h3>symlink 和 hard link 机制</h3><p>在前面知道了 pnpm 是通过 hardlink 在全局里面搞个 store 目录来存储 node_modules 依赖里面的 hard link 地址，然后在引用依赖的时候则是通过 symlink 去找到对应虚拟磁盘目录下(.pnpm 目录)的依赖地址。
+pnpm 的 node_modules 布局使用符号链接来创建依赖项的嵌套结构。
+node_modules 中每个包的每个文件都是来自内容可寻址存储的硬链接。
+假设您安装了依赖于 <a href="mailto:bar@1.0.0">bar@1.0.0</a> 的 <a href="mailto:foo@1.0.0">foo@1.0.0</a>。 pnpm 会将两个包硬链接到 node_modules 如下所示：
+foo 将被符号链接至根目录的 node_modules 文件夹，因为 foo 是项目的依赖项</p><p><a href="https://pnpm.io/zh/symlinked-node-modules-structure">链接过程</a></p><pre><code class="language-text">node_modules
+├── foo -&gt; ./.pnpm/foo@1.0.0/node_modules/foo
+└── .pnpm
+    ├── bar@1.0.0
+    │   └── node_modules
+    │       └── bar -&gt; &lt;store&gt;/bar
+    └── foo@1.0.0
+        └── node_modules
+            ├── foo -&gt; &lt;store&gt;/foo
+            └── bar -&gt; ../../bar@1.0.0/node_modules/bar
+</code></pre><p>让我们添加 <a href="mailto:qar@2.0.0">qar@2.0.0</a> 作为 bar 和 foo 的依赖项。 这是新的结构的样子：</p><pre><code class="language-text">node_modules
+├── foo -&gt; ./.pnpm/foo@1.0.0/node_modules/foo
+└── .pnpm
+    ├── bar@1.0.0
+    │   └── node_modules
+    │       ├── bar -&gt; &lt;store&gt;/bar
+    │       └── qar -&gt; ../../qar@2.0.0/node_modules/qar
+    ├── foo@1.0.0
+    │   └── node_modules
+    │       ├── foo -&gt; &lt;store&gt;/foo
+    │       ├── bar -&gt; ../../bar@1.0.0/node_modules/bar
+    │       └── qar -&gt; ../../qar@2.0.0/node_modules/qar
+    └── qar@2.0.0
+        └── node_modules
+            └── qar -&gt; &lt;store&gt;/qar
+</code></pre><p>而这些真实依赖则是通过 hard link 存储到全局的 store 目录中。</p><h2>兼容问题</h2><p>像 hard link 和 symlink 这种方式在所有的系统上都是兼容的吗？</p><p>实际上 hard link 在主流系统上(Unix/Win)使用都是没有问题的，但是 symlink 即软连接的方式可能会在 windows 存在一些兼容的问题，但是针对这个问题，pnpm 也提供了对应的解决方案，这里不做叙述。</p><h2>Monorepo 支持</h2><h3>痛点解决</h3><h4>幽灵依赖</h4><p>解释起来很简单，即某个包没有被安装(package.json 中并没有，但是用户却能够引用到这个包)。</p><p>引发这个现象的原因一般是因为 node_modules 结构所导致的，例如使用 yarn 对项目安装依赖，依赖里面有个依赖叫做 foo，foo 这个依赖同时依赖了 bar，yarn 会对安装的 node_modules 做一个扁平化结构的处理(npm v3 之后也是这么做的)，会把依赖在 node_modules 下打平，这样相当于 foo 和 bar 出现在同一层级下面。那么根据 nodejs 的寻径原理，用户能 require 到 foo，同样也能 require 到 bar。</p><pre><code class="language-text">package.json -&gt; foo(bar 为 foo 依赖)
+node_modules
+  /foo
+  /bar -&gt; 幽灵依赖
+</code></pre><p>那么这里这个 bar 就成了一个幽灵依赖，如果某天某个版本的 foo 依赖不再依赖 bar 或者 foo 的版本发生了变化，那么 require bar 的模块部分就会抛错。</p><p>还有一种场景就是在 lerna + yarn workspace 的项目里面，因为 yarn 中提供了 hoist 机制(即一些底层子项目的依赖会被提升到顶层的 node_modules 中)，这种 幽灵依赖 会更多，一些底层的子项目经常会去 require 一些在自己里面没有引入的依赖，而直接去找顶层 node_modules 的依赖(nodejs 这里的寻径是个递归上下的过程)并使用。</p><p>而根据前面提到的 pnpm 的 node_modules 依赖结构，这种现象是显然不会发生的，因为被打平的依赖会被放到 .pnpm 这个虚拟磁盘目录下面去，用户通过 require 是根本找不到的。</p><blockquote><p>值得一提的是，pnpm 本身其实也提供了将依赖提升并且按照 yarn 那种形式组织的 node_modules 结构的 Option，作者将其命名为 --shamefully-hoist ，即 &quot;羞耻的 hoist&quot;.....</p></blockquote><h4>NPM doppelgangers（分身）</h4><p>这个问题其实也可以说是 hoist 导致的，这个问题可能会导致有大量的依赖的被重复安装，举个例子:</p><p>例如有个 package，下面依赖有 lib_a、lib_b、lib_c、lib_d，其中 a 和 b 依赖 <a href="mailto:util_e@1.0.0">util_e@1.0.0</a>，而 c 和 d 依赖 <a href="mailto:util_e@2.0.0">util_e@2.0.0</a>。</p><pre><code class="language-text">- package
+- package.json
+- node_modules
+- lib_a
+  - node_modules &lt;- util_e@1.0.0
+- lib_b
+  - node_modules &lt;- util_e@1.0.0
+_ lib_c
+  - node_modules &lt;- util_e@2.0.0
+- lib_d
+  - node_modules &lt;- util_e@2.0.0
+</code></pre><p>这样必然会导致很多依赖被重复安装，于是就有了 hoist 和打平依赖的操作:</p><pre><code class="language-text">- package
+- package.json
+- node_modules
+- util_e@1.0.0
+- lib_a
+- lib_b
+_ lib_c
+  - node_modules &lt;- util_e@2.0.0
+- lib_d
+  - node_modules &lt;- util_e@2.0.0
+</code></pre><p>但是这样也只能提升一个依赖，如果两个依赖都提升了会导致冲突，这样同样会导致一些不同版本的依赖被重复安装多次，这里就会导致使用 npm 和 yarn 的性能损失。</p><p>如果是 pnpm 的话，这里因为依赖始终都是存在 store 目录下的 hard links ，一份不同的依赖始终都只会被安装一次，因此这个是能够被彻彻底底的消除的。</p>]]></content:encoded>
         </item>
     </channel>
 </rss>
