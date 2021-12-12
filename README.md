@@ -10,6 +10,8 @@
 
 ### [硬链接和符号链接](https://guoxiaxing.github.io/Blog/blog/hard-link-and-symbolic-link)
 
+### [关于 yarn 你需要知道的](https://guoxiaxing.github.io/Blog/blog/about-yarn)
+
 ## Typescript
 
 ### [Typescript 3.7 常用新特性](https://guoxiaxing.github.io/Blog/typescript/typescript-3.7)
