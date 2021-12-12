@@ -45,6 +45,65 @@ cat: f3: No such file or directory
 符号链接建立了新的 inode number，所以它是一个真实的文件并占有一定的磁盘空间。另外对 symbolic link 的操作除了删除都会直接对源文件进行操作。</p><p>hard link 的 inode number 跟源文件的 inode number 是一样的。因为一个文件系统有着相同的 inode number，所以 hard link 是不可以跨文件系统创建的。也可以将 hard link 理解为不是一个文件，把它看成是同一个 inode 的别名，建立 hard link 后他和源文件互为别名，删除其中任何一个，inode 都不会释放。只有指向同一 inode 的文件名都删除后，inode 才释放。hard link 实际上是不占空间的。</p>]]></content:encoded>
         </item>
         <item>
+            <title><![CDATA[关于 yarn 你需要知道的]]></title>
+            <link>https://guoxiaxing.github.io/Blog/blog/about-yarn</link>
+            <guid>about-yarn</guid>
+            <pubDate>Tue, 07 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[重要：永远不要手动去修改 yarn.lock 文件]]></description>
+            <content:encoded><![CDATA[<p><strong>重要：永远不要手动去修改 yarn.lock 文件</strong></p><p><strong>重要：永远不要手动去修改 package.json 文件，如果你需要使用一个包的最新版本，可以使用 <code>yarn upgrade</code> 命令来去升级该 package，它会自动安装最新版本并且更新 yarn.lock 文件</strong></p><p><strong>重要：永远不要随便的就去删除 node_modules 文件和 yarn.lock 文件去重新 install，因为它可能会更新一些你并不想更新的包，而带来一些难以预料的问题</strong></p><h2>registry</h2><p>其实就是查询下载每个模块的源。</p><p>当我们执行 <code>yarn install</code> 时候，就是去 <code>registry</code> 查询得到 package 压缩包地址进行下载的。</p><pre><code class="language-bash">yarn config get registry # 查看当前使用的源
+</code></pre><pre><code class="language-bash">yarn config set registry url # 设置源
+</code></pre><h2>依赖版本</h2><p>yarn 的包遵守语义化版本，格式为</p><pre><code class="language-text">X.Y.Z（主版本号.次版本号.修订号）：
+X.主版本号：进行不向下兼容的修改时，递增主版本号
+Y.次版本号: 做了向下兼容的新增功能或修改
+Z.修订号：做了向下兼容的问题修复
+</code></pre><h3>版本号：~version</h3><p>表示主版本号和次版本号相同，修订号取最新</p><table><thead><tr><th>表示</th><th>含义</th></tr></thead><tbody><tr><td>~3.1.4</td><td>&gt;=3.1.4 &lt;3.2.0</td></tr><tr><td>~3.1</td><td>3.1.x 或 &gt; = 3.1.0 &lt; 3.2.0</td></tr><tr><td>~3</td><td>3.x 或 &gt; = 3.0.0 &lt; 4.0.0</td></tr></tbody></table><h3>版本号：^version</h3><p>表示主版本号相同，取最新版本</p><p>使用 <code>yarn add package</code>时，默认使用的是 ^ 范围。</p><h2>依赖类型</h2><h3>dependencies</h3><p>代码运行时所需要的依赖，比如 vue，vue-router。</p><h3>devDependencies</h3><p>开发依赖，就是那些只在开发过程中需要，而运行时不需要的依赖，比如 babel，webpack。</p><h3>peerDependencies</h3><p>同伴依赖，它用来告知宿主环境需要什么依赖以及依赖的版本范围。如果宿主环境没有对应版本的依赖，在安装依赖时会报出警告。</p><h3>optionalDependencies</h3><p>可选依赖，这种依赖即便安装失败，Yarn 也会认为整个依赖安装过程是成功的。可选依赖适用于那些即便没有成功安装可选依赖，也有后备方案的情况。</p><h3>bundledDependencies</h3><p>打包依赖，在发布包时，这个数组里的包都会被打包打包到最终的发布包里，需要注意 <code>bundledDependencies</code> 中的包必须是在 <code>devDependencies</code> 或 <code>dependencies</code> 声明过的。</p><h2>缓存</h2><p><code>yarn</code> 会将安装过的包缓存下来，<strong>这样再次安装相同包的时候，就不需要再去下载，而是直接从缓存文件中直接 copy 进来</strong>。</p><p>可以通过命令 <code>yarn cache dir</code> 查看 yarn 的全局缓存目录。</p><p>yarn 会将不通版本解压后的包存放在不同目录下，目录以</p><pre><code class="language-text">npm-[package name]-[version]-[shasum]`
+</code></pre><p><code>shasum</code>是一个 hash 值，在 lock 和缓存时会使用到。</p><p>我们可以通过命令查看已经缓存过的包。</p><pre><code class="language-bash">yarn cache list    列出已缓存的每个包
+
+yarn cache list --pattern &lt;pattern&gt;  列出匹配指定模式的已缓存的包
+</code></pre><h2>yarn.lock</h2><p><code>yarn.lock</code> 中会准确的存储每个依赖的具体版本信息，以保证在不同机器安装可以得到相同的结果。</p><h3>yarn.lock 的作用</h3><p>不要轻易的删除 yarn.lock 文件。</p><p>把 yarn.lock 删掉后，原本锁住的版本都放开了，执行 yarn install 的时候会根据 package.json 里定义的版本区间去找最新版。所以，可能会造成你预期外的依赖也被更新了，不幸的话可能会引入 bug。</p><p><strong>锁定唯一版本</strong></p><ul><li>package.json 里定义的是版本区间，如^1.0.0</li><li>而 yarn.lock 里的 version 字段是唯一的版本号，如 1.0.0</li></ul><pre><code class="language-text">ajax-hook@^2.0.3:
+  version &quot;2.0.3&quot;
+  resolved &quot;http://npm.zhenguanyu.com/ajax-hook/download/ajax-hook-2.0.3.tgz#e9ceced02f940f6223123c7dc90fe2062d417c18&quot;
+  integrity sha1-6c7O0C+UD2IjEjx9yQ/iBi1BfBg=
+
+&quot;@utilts/z@^0.2.57&quot;, &quot;@utilts/z@^0.2.58&quot;:
+  version &quot;0.2.58&quot;
+  resolved &quot;http://npm.zhenguanyu.com/@utilts/z/download/@utilts/z-0.2.58.tgz#df1ad9c27734e4efd18095d49239dede266bea1f&quot;
+  integrity sha1-3xrZwnc05O/RgJXUkjne3iZr6h8=
+  dependencies:
+    &quot;@utilts/zdata&quot; &quot;^0.2.58&quot;
+    lodash-es &quot;^4.17.21&quot;
+    query-string &quot;^6.11.1&quot;
+    rxjs &quot;^6.6.7&quot;
+</code></pre><ul><li><p>第一行 <code>ajax-hook@^2.0.3</code> 包的 name 和语义化版本号，这些都来自 package.json 中的定义。也被称为 <code>Identifier(s)</code>，多个 Identifier 最终可能都指向同一个版本</p></li><li><p>version 记录的是一个确定的版本，也就是实际安装的版本</p></li><li><p>resolved 字段记录的是包的 URL 地址。其中 hash 值，即上文的<code>shasum</code></p></li><li><p>integrity 是对 resolved 下载下来的文件进行完整性校验。如果出现 diff，说明同一个下载链接对应的文件被修改过。</p></li><li><p>dependencies 字段记录的是当前包的依赖，即当前包在自己的 package.json 的 dependencies 字段中的所有依赖。</p></li></ul><p>Yarn 在安装期间，只会使用当前项目的 yarn.lock 文件，会忽略任何依赖里面的 yarn.lock 文件。在顶级 yarn.lock 中包含需要锁定的整个依赖树里全部包版本的所有信息。</p><p><strong>yarn.lock 文件是在安装期间，由 Yarn 自动生成的，并且由 yarn 来管理，不应该手动去更改，更不应该删除 yarn.lock 文件，且要提交到版本控制系统中，以免因为不同机器安装的包版本不一致引发问题。</strong></p><p>我们的常规操作(yarn add / yarn upgrade)都会自动更新 package.json 和 yarn.lock</p><h3>package.json 中的 resolutions 选项</h3><p><strong>通过这个选项可以修改 yarn.lock 中某个 package 的版本</strong></p><p>假如你的项目依赖了 foo,foo 依赖了 bar@^1.0.0。假设 bar 现在有两个版本 1.0.0 和 1.1.0。很不幸，bar 在发布 1.1.0 的时候没有做好向后兼容。导致 foo 和 <a href="mailto:bar@1.1.0">bar@1.1.0</a> 不能搭配使用。如果你可以等：</p><ul><li>要么等 foo 把依赖 bar 锁成 1.0.0 并重新发版</li><li>要么等 bar 修复兼容问题后重新发版</li></ul><p>那如果你等不了呢，你已知 foo 和 <a href="mailto:bar@1.0.0">bar@1.0.0</a> 可以正常工作。如果你能锁住 foo 对 bar 的依赖就好了，但是这定义在 foo 的 packge.json 里，你总不能去改 node_modules/foo/package.json 吧？这不合适。resolutions 可以解决你的问题，只要在你自己项目的 package.json 里定义：</p><pre><code class="language-json">&quot;resolutions&quot;: {
+  &quot;foo/bar&quot;: &quot;1.0.0&quot;
+}
+</code></pre><p>这里的 key&quot;foo/bar&quot;表示 foo 的直接依赖 bar，把版本区间重写成 1.0.0。如果 foo 不是直接依赖的 bar（foo -&gt; ... -&gt; bar），我还需要把中间的链路都捋清楚吗？不用那么麻烦！</p><pre><code class="language-json">&quot;resolutions&quot;: {
+  &quot;foo/**/bar&quot;: &quot;1.0.0&quot;
+}
+</code></pre><p>如果你的项目里有很多依赖直接/间接的依赖了 bar，每个定义的版本区间可能有差别，你知道某个版本可以让他们都能正常工作，而不用安装多个版本。也可以不用声明前缀部分，只写包名 bar。这样不管是哪里依赖到了 bar 都会指向你声明的哪个版本。</p><pre><code class="language-json">&quot;resolutions&quot;: {
+  &quot;bar&quot;: &quot;1.0.0&quot;
+}
+</code></pre><p>执行 yarn install 后，在 yarn.lock 里搜索 bar@：</p><pre><code class="language-text">bar@^1.0.0 bar@1.1.0 bar@^2.0.0:
+  version &quot;1.0.0&quot;
+  ...
+</code></pre><p><strong>可以看到，resolutions 可以违背版本区间的限制，比如上例中 Identifiers 里的 <a href="mailto:bar@1.1.0">bar@1.1.0</a>``bar@^2.0.0。</strong></p><h3>yarn --frozen-lockfile / npm ci</h3><p>即使有 lock file 的存在，也无法保证在持续集成环境中每次安装依赖都和开发时一致，因为可能存在 package.json 和 lockfile 版本号不匹配并需要更新依赖版本的情况。可以使用--frozen-lockfile 来避免。</p><p>这两个命令的作用类似，必须存在 lock file 且依赖版本和 package.json 匹配时才会安装依赖，否则报错。如此可强制开发者在持续集成前先在本地解决依赖版本的一致性问题。</p><h2>yarn install 的过程</h2><p>首次执行 yarn install 安装，会按照 package.json 中的语义化版本，去向 registry 进行查询，并获取到符合版本规则的最新的依赖包进行下载，并构建构建依赖关系树。 比如在 package.json 中指定 react 的版本为 ^2.0.0，就会获取符合 2.x.x
+的最高版本的包。然后自动生成 yarn.lock 文件，并生成缓存。</p><p>之后再执行 yarn install，会对比 package.json 中依赖版本范围和 yarn.lock 中版本号是否匹配。</p><ul><li><p>版本号匹配：会根据 yarn.lock 中的 resolved 字段去查看缓存， 如果有缓存，直接 copy，没有缓存则按照 resolved 字段的 url 去下载包。</p></li><li><p>版本号不匹配：根据 package.json 中的版本范围去 registry 查询，下载符合版本规则最新的包，并更新至 yarn.lock 中。</p></li></ul><h2>模块扁平化</h2><p>假设我项目的首层依赖(即当前项目的 dependence 和 devDependences 中的依赖，不包括依赖的依赖)中有 A，B，C 三个包，A 和 B 包同时依赖了相同版本范围的 D 包。那么这部分的依赖关系树是这样的：</p><pre><code class="language-text">├── A
+│ └── D
+├── B
+│ └── D
+├── C
+</code></pre><p>如果按照这样的依赖关系树直接安装的话，D 模块会在 A 包和 B 包的 node_modules 中都安装，这样会导致模块冗余。</p><p>为了保证依赖关系树中没有大量重复模块，yarn 在安装时会做 dedupe（去重）操作，它会遍历所有节点，逐个将模块放在根节点下面，也就是当前项目的 node-modules 中。当发现有相同的模块时，会判断当前模块指定的版本范围是否交集，如果有，则只保留兼容版本，如果没有则在当前的包的 node-modules 下安装。</p><p>所以上面的说的情况，最终安装完成是下面这样的，A，B，C，D 包都会安装在第一层 node-modules 下（在依赖的 D 版本兼容的情况下）。</p><pre><code class="language-text">├── A
+├── B
+├── C
+├── D
+</code></pre><p>如果 A 包和 B 包依赖的是不兼容的版本，假设 A 包依赖的是 D@1 版本的包，B 包依赖的是 D@2 版本。则最终安装的结果如下：</p><pre><code class="language-text">├── A
+├── B
+│ └── D@2
+├── C
+├── D@1
+</code></pre><p>至于是 D 的那个版本被安装在根目录的 node_modules 下，取决的是模块解析的顺序，先解析到的 D 的指定版本会被安装到根 node_modules，后解析到的 D 且不兼容已有版本时，会被安装到对应模块的 node_modules 下</p>]]></content:encoded>
+        </item>
+        <item>
             <title><![CDATA[关于 line-height 属性]]></title>
             <link>https://guoxiaxing.github.io/Blog/blog/line-height</link>
             <guid>line-height</guid>
