@@ -12,6 +12,9 @@
 
 ### [关于 yarn 你需要知道的](https://guoxiaxing.github.io/Blog/blog/about-yarn)
 
+### [如何优雅的修改第三方包](https://guoxiaxing.github.io/Blog/blog/patch-package)
+
+
 ## Typescript
 
 ### [Typescript 3.7 常用新特性](https://guoxiaxing.github.io/Blog/typescript/typescript-3.7)
