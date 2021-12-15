@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[639],{3666:function(a){a.exports=JSON.parse('{"allTagsPath":"/Blog/blog/tags","slug":"/Blog/blog/tags/patch-package","name":"patch-package","count":1,"permalink":"/Blog/blog/tags/patch-package"}')}}]);
