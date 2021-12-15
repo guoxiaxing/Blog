@@ -34,7 +34,7 @@ yarn add patch-package postinstall-postinstall
 
 #### 为什么 yarn 要添加 postinstall-postinstall 包
 
-yarn 在 yarn、yarn install 和 yarn add <package> 之后运行 postinstall 脚本，但在 yarn remove <package> 之后不运行。如果您将此包添加到您的项目中，即使在 yarn remove <package> 之后，它也会执行您项目的 postinstall 钩子。这需要你的 postinstall 脚本是幂等的，因为它会为 yarn、yarn install 和 yarn add <package> 运行两次
+yarn 在 yarn、yarn install 和 yarn add `<package>` 之后运行 postinstall 脚本，但在 yarn remove `<package>` 之后不运行。如果您将此包添加到您的项目中，即使在 yarn remove `<package>` 之后，它也会执行您项目的 postinstall 钩子。这需要你的 postinstall 脚本是幂等的，因为它会为 yarn、yarn install 和 yarn add `<package>` 运行两次
 
 ### 修改 package.json
 
