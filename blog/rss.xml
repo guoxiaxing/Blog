@@ -4,9 +4,234 @@
         <title>Try's Blog Blog</title>
         <link>https://guoxiaxing.github.io/Blog/blog</link>
         <description>Try's Blog Blog</description>
-        <lastBuildDate>Tue, 14 Dec 2021 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Thu, 16 Dec 2021 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[【Doing】rxjs 基础概念]]></title>
+            <link>https://guoxiaxing.github.io/Blog/blog/rxjs</link>
+            <guid>rxjs</guid>
+            <pubDate>Thu, 16 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[Rxjs 是什么？]]></description>
+            <content:encoded><![CDATA[<h2>Rxjs 是什么？</h2><p>RxJS 是一个库，它通过使用 observable 序列来编写异步和基于事件的程序。它提供了一个核心类型 Observable，附属类型 (Observer、 Schedulers、 Subjects) 和操作符 (map、filter、reduce、every, 等等)，这些数组操作符可以把异步事件作为集合来处理。</p><blockquote><p>可以把 RxJS 当做是用来处理事件的 Lodash。</p></blockquote><h2>特点</h2><ul><li>纯净性：使用纯函数来产生值，不需要借助外部变量</li><li>流动性：RxJS 提供了一整套操作符来帮助你控制事件如何流经 observables 。</li><li>值：可以对流经 observable 的值进行转换</li></ul><h2>Rxjs Observables vs Promise</h2><h3>多值 vs 单值</h3><p>一个 Promise 只能产生一个值/错误，之后的值或者错误都会被忽略。这也就是 Promise 的状态只能改变一次，一旦改变就不会再变。</p><pre><code class="language-javascript">const numberPromise = new Promise(resolve =&gt; {
+  resolve(5);
+  resolve(10); // 不生效
+});
+
+numberPromise.then(value =&gt; console.log(value));
+
+// 输出 只会有 5
+</code></pre><p>再看看 Observable</p><pre><code class="language-javascript">const Observable = require(&quot;rxjs/Observable&quot;).Observable;
+
+const numberObservable = new Observable(observer =&gt; {
+  observer.next(5);
+  observer.next(10);
+});
+
+numberObservable.subscribe(value =&gt; console.log(value));
+
+// 输出 5 10
+</code></pre><p>Observable 是可以产生多个值的，这一点和 promise 的差别很大。平常我们可能遇到的大多数情况都是一个请求对应一个响应，但是我们也会有产生多个值的情况：</p><ul><li>定时器</li><li>DOM 事件</li></ul><h3>代码执行</h3><pre><code class="language-javascript">// Promise构造函数内部的逻辑是同步执行的
+const promise = new Promise(resolve =&gt; {
+  console.log(&quot;promise call&quot;);
+  resolve(1);
+  console.log(&quot;promise end&quot;);
+});
+
+// 执行这段代码 promise call 和 promise end 会立即执行
+const observable = new Observable(() =&gt; {
+  console.log(&quot;I was called!&quot;);
+});
+
+// 此时并没有console
+
+// 只有 observable.subscribe(); 这个时候 I was called！才会被打印出来。
+</code></pre><p>上面的代码我们可以发现 observable 是 lazy 的，只有在订阅的时候代码才会被执行</p><h3> 能取消 vs 不能取消</h3><p>promise 默认是不能取消的，一旦创建就会被执行。</p><pre><code class="language-javascript">const Observable = require(&quot;rxjs/Observable&quot;).Observable;
+
+const observable = new Observable(observer =&gt; {
+  let i = 0;
+  const token = setInterval(() =&gt; {
+    observer.next(i++);
+  }, 1000);
+
+  return () =&gt; clearInterval(token);
+});
+
+const subscription = observable.subscribe(value =&gt; console.log(value + &quot;!&quot;));
+
+setTimeout(() =&gt; {
+  subscription.unsubscribe();
+}, 5000);
+
+// 结果
+
+// 0!
+// 1!
+// 2!
+// 3!
+</code></pre><p>observable 是可以被取消的，可以使用 subscribe 返回的值，一个 Subscription 对象的 unsubscribe 方法来取消订阅。</p><p><strong>new Observable 传入的函数的返回值会在 unsubscribe 调用的时候被执行，所以我们可以进行一些清理操作。需要注意的是我们取消的是对这个 observable 的订阅，但是原来的 new Observable 中的定时器依旧在执行，只是该定时器发的值，没有被订阅而已。所以我们需要执行<code>() =&gt; clearInterval(token)</code>清除该定时器</strong></p><h3>多个订阅 vs 单个订阅</h3><p>一个 promise 被创建的时候，他就已经执行了，并且不能重复的被执行了。</p><pre><code class="language-javascript">let time;
+const waitOneSecondPromise = new Promise(resolve =&gt; {
+  console.log(&quot;promise call&quot;);
+  time = new Date().getTime();
+  setTimeout(() =&gt; resolve(&quot;hello world&quot;), 1000);
+});
+
+waitOneSecondPromise.then(value =&gt; {
+  console.log(&quot;第一次&quot;, value, new Date().getTime() - time);
+});
+
+setTimeout(() =&gt; {
+  waitOneSecondPromise.then(value =&gt; {
+    console.log(&quot;第二次&quot;, value, new Date().getTime() - time);
+  });
+}, 5000);
+
+// 输出结果是 promise call
+// 第一次 hello world 1007
+// 第二次 hello world 5006
+</code></pre><p>第一个 then 会在 1s 后输出值，第二个 then 会在 5s 后立即输出值，因为第二个 then 方法执行的时候 promise 的状态已经改变，所以它可以直接拿到 promise resolve 的值，不需要再等待 1s 了</p><p>observable：</p><pre><code class="language-javascript">const Observable = require(&quot;rxjs/Observable&quot;).Observable;
+
+let time;
+const waitOneSecondObservable = new Observable(observer =&gt; {
+  console.log(&quot;I was called&quot;);
+  time = new Date().getTime();
+  setTimeout(() =&gt; observer.next(&quot;hey girl&quot;), 1000);
+});
+
+waitOneSecondObservable.subscribe(value =&gt; {
+  console.log(&quot;第一次&quot;, value, new Date().getTime() - time);
+});
+
+setTimeout(() =&gt; {
+  waitOneSecondObservable.subscribe(value =&gt; {
+    console.log(&quot;第二次&quot;, value, new Date().getTime() - time);
+  });
+}, 5000);
+
+// 输出
+// I was called
+// 第一次 hey girl 1003
+// I was called
+// 第二次 hey girl 1003
+</code></pre><p>对于 observable，这里其实是(Cold Observable)他们每次被 subscribe 都是一次新的订阅，observable 会被重新执行。所以无论 observable 何时被 subscribe 产生的值都是一样的</p><p>但是有时候我们不希望每次 subscribe 都重新订阅，我们希望它可以共享前面的订阅，也就是不希望这个 observable 被重新在执行一遍，多用于 http 请求的场景。在 http 请求中，我们可能希望只发一次请求，但是结果被多个订阅者共用。 Observable 本身没有提供这个功能，我们可以用 RxJS 这个库来实现，它有一个 share 的 operator。其实这就是将一个 Cold Observable 变为了 Hot Observable。</p><pre><code class="language-javascript">const waitOneSecondObservable = new Observable(observer =&gt; {
+  // 发送http请求
+});
+
+const sharedWaitOneSecondObservable = waitOneSecondObservable.share();
+
+sharedWaitOneSecondObservable.subscribe(doSomething);
+
+sharedWaitOneSecondObservable.subscribe(doSomethingElse);
+
+// 使用了share，虽然subscribe了多次，但是仅发送一次请求，share了结果。
+</code></pre><h3>可能是异步 vs 一直是异步</h3><p>promise 中同步的 resolve 了一个值，但是它还是会异步执行。</p><pre><code class="language-javascript">const promise = new Promise(resolve =&gt; {
+  resolve(5);
+});
+
+promise.then(value =&gt; console.log(value + &quot;!&quot;));
+
+console.log(&quot;And now we are here.&quot;);
+
+// And now we are here.
+// 5!
+</code></pre><p>promise 一直是异步， Observables 则比较灵活，是否为异步得根据自己的函数来定，这点也比较危险。rxjs 中有一些操作符可以让监听强制为异步的方式，例如 observeOn。</p><pre><code class="language-javascript">const Observable = require(&quot;rxjs/Observable&quot;).Observable;
+
+const observable = new Observable(observer =&gt; {
+  observer.next(5);
+  setTimeout(() =&gt; {
+    observer.next(6);
+  });
+});
+
+observable.subscribe(value =&gt; console.log(value + &quot;!&quot;));
+console.log(&quot;And now we are here.&quot;);
+
+// 5!
+// And now we are here.
+// 6!
+</code></pre><h2>Observable</h2><p>可观察对象</p><ul><li><strong>可以是异步的，也可以是同步的</strong></li><li>是一个是多个值的惰性推送集合。可以产生值。</li><li>Observable 可以随着时间的推移 “返回” 多个值</li><li>在 Observable 执行中, 可能会发送零个到无穷多个 &quot;Next&quot; 通知。如果发送的是 &quot;Error&quot; 或 &quot;Complete&quot; 通知的话，那么之后不会再发送任何通知了。</li></ul><h3>Cold Observable</h3><p>单播的 observable
+<strong>只有被 Observer 订阅了才会开始产生值。</strong>有多少个订阅就会生成多少个订阅的实例，每个订阅都是从第一个产生的值开始接收值，所以每个订阅接收到的值都是一样的。</p><h3>Hot Observable</h3><p>不管有没有订阅都会产生值。是多播的，多个订阅会共享同一个实例。是从订阅开始接收值，每个订阅接收到的值都是不同的，取决于他们什么时候订阅。</p><h4>怎么创建 Hot Observable</h4><h5>multicast + Subject</h5><p>multicast 操作符的工作原理：观察者订阅一个基础的 Subject，然后 Subject 订阅源 Observable 。</p><pre><code class="language-javascript">var source = Rx.Observable.from([1, 2, 3]);
+var subject = new Rx.Subject();
+var multicasted = source.multicast(subject);
+
+// 在底层使用了 `subject.subscribe({...})`:
+multicasted.subscribe({
+  next: v =&gt; console.log(&quot;observerA: &quot; + v)
+});
+multicasted.subscribe({
+  next: v =&gt; console.log(&quot;observerB: &quot; + v)
+});
+
+// 在底层使用了 `source.subscribe(subject)`:
+multicasted.connect();
+</code></pre><p>multicast 返回的是 ConnectableObservable，它只是一个有 connect() 方法的 Observable 。</p><p>connect() 方法十分重要，它决定了何时启动共享的 Observable 执行。因为 connect() 方法在底层执行了 source.subscribe(subject)，所以它返回的是 Subscription，你可以取消订阅以取消共享的 Observable 执行。</p><blockquote><p>ConnectableObservable: ConnectableObservable 是多播的共享 Observable，可以同时被多个 observers 共享订阅，它是 Hot Observables。ConnectableObservable 是订阅者和真正的源头 Observables 的中间人，ConnectableObservable 从源头 Observables 接收到值然后再把值转发给订阅者。</p></blockquote><h5>refCount()</h5><p>ConnectableObservable 的 refCount() 方法(引用计数)，这个方法返回 Observable，这个 Observable 会追踪有多少个订阅者。当订阅者的数量从 0 变成 1，它会调用 connect() 以开启共享的执行。当订阅者数量从 1 变成 0 时，它会完全取消订阅，停止进一步的执行。</p><p><strong>refCount 的作用是，当有第一个订阅者时，多播 Observable 会自动地启动执行，而当最后一个订阅者离开时，多播 Observable 会自动地停止执行。</strong></p><h5>publish()</h5><p>等价于 multicast(new Subject())</p><p>这个操作符可以将 cold observable 转换为 ConnectableObservable，而不需要我们使用的创建 Subject 实例</p><pre><code class="language-javascript">let obs$ = interval(1000).pipe(publish(), refCount());
+</code></pre><h5>share()</h5><p>等价于 publish() + refCount()</p><pre><code class="language-javascript">let obs$ = interval(1000).pipe(share());
+</code></pre><blockquote><p>publishReplay、shareReplay、publishBehavior、shareBehavior、publishAsync、shareAsync 都可以将单播的 Observable 转换为多播的 Observable，只不过底层使用了不同类型的 Subject</p></blockquote><h2>Observer</h2><p>观察者</p><h3>什么是观察者？</h3><p>定义对于 observable 该如何处理</p><p>观察者是 Observable 发送的值的消费者。观察者只是一组回调函数的集合，每个回调函数对应一种 Observable 发送的通知类型：next、error 和 complete 。</p><pre><code class="language-javascript">var observer = {
+  next: x =&gt; console.log(&quot;Observer got a next value: &quot; + x),
+  error: err =&gt; console.error(&quot;Observer got an error: &quot; + err),
+  complete: () =&gt; console.log(&quot;Observer got a complete notification&quot;)
+};
+</code></pre><p>要使用观察者，需要把它提供给 Observable 的 subscribe 方法：</p><pre><code class="language-javascript">observable.subscribe(observer);
+</code></pre><p><strong>观察者只是有三个回调函数的对象，每个回调函数对应一种 Observable 发送的通知类型。</strong>
+观察者也可以是部分的</p><h2>Subscription</h2><p>订阅</p><p>当你订阅了 Observable，你会得到一个 Subscription ，<strong>它表示进行中的执行</strong>。只要调用 unsubscribe() 方法就可以取消执行。</p><h2>Subject</h2><p>主体。是一种特殊的 observable（Hot Observable），它允许将值多播给多个观察者，所以 Subject 是多播的，而普通的 Observables 是单播的(每个已订阅的观察者都拥有 Observable 的独立执行)。</p><ul><li><strong>每个 Subject 都是 Observable。</strong> -对于 Subject，你可以提供一个观察者并使用 subscribe 方法，就可以开始正常接收值。从观察者的角度而言，它无法判断 Observable 执行是来自普通的 Observable 还是 Subject 。</li></ul><p>在 Subject 的内部，subscribe 不会调用发送值的新执行。它只是将给定的观察者注册到观察者列表中。也就是说这个新的观察者并不一定能收到 Subject 发出的所有值，它可以收到的值取决于它何时订阅。</p><ul><li><strong>每个 Subject 都是观察者。</strong> Subject 是一个有如下方法的对象： next(v)、error(e) 和 complete() 。要给 Subject 提供新值，只要调用 next(theValue)，它会将值多播给已注册监听该 Subject 的观察者们。</li></ul><h3>BehaviorSubject</h3><p>它有一个“当前值”的概念。它保存了发送给消费者的最新值。并且当有新的观察者订阅时，会立即从 BehaviorSubject 那接收到“当前值”。
+BehaviorSubject 必须传入一个初始化的值</p><h3>ReplaySubject</h3><p>ReplaySubject 类似于 BehaviorSubject，它可以发送旧值给新的订阅者，但它还可以记录 Observable 执行的一部分。</p><p><strong>ReplaySubject 记录 Observable 执行中的多个值并将其回放给新的订阅者。</strong></p><p>ReplaySubject 在实例化的时候接受两个参数，第一个表示缓冲数量，第二个表示 window time (以毫秒为单位)来确定多久之前的值可以记录.</p><h3>AsyncSubject</h3><p>只有当 Observable 执行完成时(执行 complete())，它才会将执行的最后一个值发送给观察者。</p><h2>Scheduler (调度器)</h2><p>调度器控制着何时启动 subscription 和何时发送通知
+目前还没有使用到过</p><blockquote><p>调度器可以让你规定 Observable 在什么样的执行上下文中发送通知给它的观察者。</p></blockquote><p><a href="https://cn.rx.js.org/manual/overview.html#h17">调度器相关</a></p><h2>Q&amp;A</h2><ol><li>multicast(new Subject()) 和 multicast(()=&gt;new Subject())的区别</li></ol><p>前者将一个冷的 observable 转化为一个热的 observable；后者实际上每次都会生成一个新的 Subject，在有新的订阅者来临时（在和 refCount 配合使用时，因为 refCount 会在有新的订阅者出现时使用 connect 开始共享的执行），如果前一个 subject 已经 complete 的话，那么就会重新生成一个 Subject，所以后者还是会接收到值。因此后者还是一个冷的 observable，多播一般使用前者。</p><p>口说无凭，看例子</p><ul><li>multicast(new Subject())</li></ul><pre><code class="language-javascript">var source = from([1, 2, 3]);
+var multicasted = source.pipe(multicast(new Subject()), refCount());
+
+// 在底层使用了 `subject.subscribe({...})`:
+multicasted.subscribe({
+  next: v =&gt; console.log(&quot;observerA: &quot; + v)
+});
+setTimeout(() =&gt; {
+  multicasted.subscribe({
+    next: v =&gt; console.log(&quot;observerB: &quot; + v)
+  });
+}, 200);
+
+// multicasted.connect()
+</code></pre><p>上面这种写法，无论是使用 refCount 还是手动 connect 结果都一样</p><pre><code class="language-text">observerA: 1
+observerA: 2
+observerA: 3
+</code></pre><ul><li>multicast(()=&gt;new Subject()) + refCount()</li></ul><pre><code class="language-javascript">var source = from([1, 2, 3]);
+var multicasted = source.pipe(
+  multicast(() =&gt; new Subject()),
+  refCount()
+);
+
+// 在底层使用了 `subject.subscribe({...})`:
+multicasted.subscribe({
+  next: v =&gt; console.log(&quot;observerA: &quot; + v)
+});
+setTimeout(() =&gt; {
+  multicasted.subscribe({
+    next: v =&gt; console.log(&quot;observerB: &quot; + v)
+  });
+}, 200);
+</code></pre><p>结果</p><pre><code class="language-text">
+observerA: 1
+observerA: 2
+observerA: 3
+observerB: 1
+observerB: 2
+observerB: 3
+</code></pre><ul><li>multicast(()=&gt;new Subject()) + 手动 connect</li></ul><pre><code class="language-javascript">var source = from([1, 2, 3]);
+var multicasted = source.pipe(multicast(() =&gt; new Subject()));
+
+// 在底层使用了 `subject.subscribe({...})`:
+multicasted.subscribe({
+  next: v =&gt; console.log(&quot;observerA: &quot; + v)
+});
+setTimeout(() =&gt; {
+  multicasted.subscribe({
+    next: v =&gt; console.log(&quot;observerB: &quot; + v)
+  });
+}, 200);
+multicasted.connect();
+</code></pre><p>结果</p><pre><code class="language-text">observerA: 1
+observerA: 2
+observerA: 3
+</code></pre><ol start="2"><li>publish().refCount() 或 share()的效果</li></ol><p>同时接通的多个订阅者不会重复触发上游的逻辑；但全部取消订阅之后再接通，就会再走一遍上游 (重订阅)； 因此并不是严格意义上的“缓存”</p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[如何优雅的修改第三方包]]></title>
             <link>https://guoxiaxing.github.io/Blog/blog/patch-package</link>
