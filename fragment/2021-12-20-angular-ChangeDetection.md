@@ -6,7 +6,7 @@ tags: [angular]
 
 ## ChangeDetection 是什么
 
-数据驱动的 UI，我们期望的是只需要改变 component 里的数据，然后 template 里的 UI 元素就魔法般地自动变成最新的展现了。ChangeDetection 就是 Angular 实现数据驱使 UI 的方式。
+数据驱动的 UI，我们期望的是只需要改变 component 里的数据，然后 template 里的 UI 元素就魔法般地自动变成最新的展现了。ChangeDetection 就是 Angular 实现数据驱动 UI 的方式。
 
 ## ChangeDetectionStrategy.Default
 
@@ -52,7 +52,7 @@ OnPush 虽然需要我们主动调用 markForCheck，但是有三种情况 Angul
 OnPush 相关的两个接口:
 
 - markForCheck - 标记为 dirty。下次有 detectChange 的时候更新 UI
-- detectChange - 实际对当前组件进行 detectChange，同步更新 UI
+- detectChange - 立即对当前组件进行 detectChange，同步更新 UI
 
 ### OnPush 主要原则
 
