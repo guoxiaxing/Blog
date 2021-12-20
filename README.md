@@ -16,6 +16,10 @@
 
 ### [rxjs 基础概念](https://guoxiaxing.github.io/Blog/blog/rxjs-basic)
 
+## 框架
+
+### [Angular ChangeDetection](https://guoxiaxing.github.io/Blog/fragment/angular-ChangeDetection)
+
 ## Typescript
 
 ### [Typescript 3.7 常用新特性](https://guoxiaxing.github.io/Blog/typescript/typescript-3.7)
