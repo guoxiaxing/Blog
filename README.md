@@ -16,6 +16,8 @@
 
 ### [rxjs 基础概念](https://guoxiaxing.github.io/Blog/blog/rxjs-basic)
 
+### [rxjs 操作符](https://guoxiaxing.github.io/Blog/blog/rxjs-operators)
+
 ## 框架
 
 ### [Angular ChangeDetection](https://guoxiaxing.github.io/Blog/fragment/angular-ChangeDetection)
