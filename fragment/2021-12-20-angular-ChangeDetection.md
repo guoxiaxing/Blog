@@ -52,7 +52,7 @@ OnPush 虽然需要我们主动调用 markForCheck，但是有三种情况 Angul
 OnPush 相关的两个接口:
 
 - markForCheck - 标记为 dirty。下次有 detectChange 的时候更新 UI
-- detectChange - 立即对当前组件进行 detectChange，同步更新 UI
+- detectChange - 立即对当前组件进行 detectChange，即使组件运行在 ngZone 之外，同步更新 UI
 
 ### OnPush 主要原则
 
