@@ -4,9 +4,49 @@
         <title>Try's Blog Blog</title>
         <link>https://guoxiaxing.github.io/Blog/fragment</link>
         <description>Try's Blog Blog</description>
-        <lastBuildDate>Mon, 20 Dec 2021 00:00:00 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 24 Dec 2021 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
+        <item>
+            <title><![CDATA[formControl的disabled属性绑定不生效]]></title>
+            <link>https://guoxiaxing.github.io/Blog/fragment/angular-form-contol-disabled</link>
+            <guid>angular-form-contol-disabled</guid>
+            <pubDate>Fri, 24 Dec 2021 00:00:00 GMT</pubDate>
+            <description><![CDATA[背景]]></description>
+            <content:encoded><![CDATA[<h2>背景</h2><p>我想在组件的某一个属性为 true 的时候禁用我的 checkbox，所以我就在 type=&#x27;checkbox&#x27;的 input 框上添加了一个数据绑定<code>[disabled]=&#x27;!!readonly&#x27;</code>并且我确定我的 readonly 属性是 true，然而，结果让我大吃一惊，没有生效，怎么会这样？？？？？</p><h2>代码</h2><pre><code class="language-html">&lt;label&gt;
+  &lt;input
+    type=&quot;checkbox&quot;
+    formControlName=&quot;correct&quot;
+    [style]=&quot;{ verticalAlign: &#x27;text-bottom&#x27; }&quot;
+    [disabled]=&quot;!!readonly&quot;
+  /&gt;
+  是
+&lt;/label&gt;
+</code></pre><p>复选框仍然可以选择
+但是我发现当我给下面的单选框设置一样的 disabled 属性的时候，它是符合预期的，再看看它的代码</p><pre><code class="language-html">&lt;label&gt;
+  &lt;input
+    type=&quot;radio&quot;
+    [checked]=&quot;!!item.value.correct&quot;
+    (change)=&quot;onRadioChange(i)&quot;
+    [style]=&quot;{ verticalAlign: &#x27;text-bottom&#x27; }&quot;
+    [disabled]=&quot;!!readonly&quot;
+  /&gt;
+  是
+&lt;/label&gt;
+</code></pre><p>这个结果更是让我摸不着头脑 😭</p><h2>排查过程</h2><ol><li>直接给<!-- -->[disabled]<!-- -->=&#x27;true&#x27; -&gt; 不生效 ❌</li><li>直接设置 disabled 属性 -&gt; 生效，因为这就相当于操作了 input 标签本身的 html 属性，和 angular 就没啥关系了 ✅</li><li>diasbled=&#x27;disabled&#x27; -&gt; 生效，原因同二 ✅</li><li>[disabled]<!-- --> = &#x27;readonly ? &quot;disabled&quot; : &quot;&quot;&#x27; -&gt; 不生效 ❌</li></ol><p>然后我似乎总结出了规律，只要是在 input 上使用了 angular 的数据绑定，即使计算之后的值是对的，也是无法生效的，但是直接使用 html 的 input 标签的属性就是可以的！！！所以是 angular 绑定的时候出问题了？？？</p><h2>发现 Bug</h2><p>功夫不负有心人，我终于发现了一些不一样的东西。
+原来，不生效的原因是，我的 type=&#x27;checkbox&#x27;的 input 是一个 formControl，所以 angular 更希望你通过给 fromControl 实例设置 disabled 来禁用它，而不是在它上面绑定<!-- -->[disabled]<!-- -->属性！！！！而且其实 angular 是给我报了一个警告的，只不过因为它是一个警告 ⚠️ 所以我认为它并不会是导致我代码不生效的原因！！！粗心大意太误人了 🤦‍♀</p><h2>解决方式</h2><ol><li>当然是使用 angular 推荐的方式，通过你的 formControl 实例来 disabled 这个表单项</li></ol><pre><code class="language-typescript">formControl.disable(); // 禁用
+formControl.enable(); // 启用
+</code></pre><ol start="2"><li>但是，由于我的这段代码并不是我写的，所以我采用了一种偷巧的方式，直接设置 input 原生的 disabled 属性，也是可以达到期望的</li></ol><pre><code class="language-html">&lt;label fncFormItem&gt;
+  &lt;input
+    type=&quot;checkbox&quot;
+    formControlName=&quot;correct&quot;
+    [style]=&quot;{ verticalAlign: &#x27;text-bottom&#x27; }&quot;
+    [attr.disabled]=&quot;!!readonly ? &#x27;&#x27; : null&quot;
+  /&gt;
+  是
+&lt;/label&gt;
+</code></pre><h2>参考链接</h2><p><a href="https://www.cnblogs.com/z7luv/p/15015895.html">angular 的 formControl 的 disabled 属性绑定不生效</a></p>]]></content:encoded>
+        </item>
         <item>
             <title><![CDATA[Angular ChangeDetection]]></title>
             <link>https://guoxiaxing.github.io/Blog/fragment/angular-ChangeDetection</link>

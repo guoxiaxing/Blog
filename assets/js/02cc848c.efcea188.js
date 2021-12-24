@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[7965],{3031:function(e){e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Angular ChangeDetection","permalink":"/Blog/fragment/angular-ChangeDetection"}]}')}}]);
