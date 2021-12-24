@@ -24,6 +24,8 @@
 
 ### [Angular ChangeDetection](https://guoxiaxing.github.io/Blog/fragment/angular-ChangeDetection)
 
+### [formControl 的 disabled 属性绑定不生效](https://guoxiaxing.github.io/Blog/fragment/angular-form-contol-disabled)
+
 ## Typescript
 
 ### [Typescript 3.7 常用新特性](https://guoxiaxing.github.io/Blog/typescript/typescript-3.7)
