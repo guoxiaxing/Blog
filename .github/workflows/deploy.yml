@@ -12,13 +12,13 @@ jobs:
 
       - name: Copy Directory 📝
         run: node cp.js
-      
+
       - name: Install 🔧
         uses: CultureHQ/actions-yarn@master
         with:
           args: install
-      
-       - name: Build 🏠
+
+      - name: Build 🏠
         uses: CultureHQ/actions-yarn@master
         with:
           args: build
