@@ -4,16 +4,16 @@
         <title>Try's Blog Blog</title>
         <link>https://guoxiaxing.github.io/Blog/blog</link>
         <description>Try's Blog Blog</description>
-        <lastBuildDate>Mon, 27 Dec 2021 13:49:53 GMT</lastBuildDate>
+        <lastBuildDate>Mon, 27 Dec 2021 14:17:49 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <item>
             <title><![CDATA[welcome to my life]]></title>
             <link>https://guoxiaxing.github.io/Blog/blog/life</link>
             <guid>life</guid>
-            <pubDate>Mon, 27 Dec 2021 13:49:53 GMT</pubDate>
-            <description><![CDATA[还没啥...]]></description>
-            <content:encoded><![CDATA[<p>还没啥...</p>]]></content:encoded>
+            <pubDate>Mon, 27 Dec 2021 14:17:49 GMT</pubDate>
+            <description><![CDATA[不正经的吃喝玩乐 🍰 ☕️ 🏃‍♀️ 😄]]></description>
+            <content:encoded><![CDATA[<p>不正经的吃喝玩乐 🍰 ☕️ 🏃‍♀️ 😄</p>]]></content:encoded>
         </item>
     </channel>
 </rss>
