@@ -15,7 +15,6 @@ const config = {
   favicon: "/img/logo.png",
   organizationName: "guoxiaxing", // Usually your GitHub org/user name.
   projectName: "Blog", // Usually your repo name.
-
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -33,7 +32,6 @@ const config = {
       })
     ]
   ],
-
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
@@ -68,7 +66,25 @@ const config = {
       },
       hideableSidebar: true
     }),
-  plugins: []
+  plugins: [
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        language: ["en", "zh"],
+        translations: {
+          search_placeholder: "Search",
+          see_all_results: "See all results",
+          no_results: "No results.",
+          search_results_for: 'Search results for "{{ keyword }}"',
+          search_the_documentation: "Search the documentation",
+          count_documents_found: "{{ count }} document found",
+          count_documents_found_plural: "{{ count }} documents found",
+          no_documents_were_found: "No documents were found"
+        }
+      }
+    ]
+  ]
 };
 
 module.exports = config;
