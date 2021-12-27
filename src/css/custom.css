@@ -30,3 +30,10 @@ html[data-theme="dark"] .docusaurus-highlight-code-line {
 input:focus-visible {
   outline: 1px solid var(--ifm-color-primary);
 }
+
+input.navbar__search-input {
+  background-color: white;
+}
+html[data-theme="dark"] input.navbar__search-input {
+  background-color: #444950;
+}
