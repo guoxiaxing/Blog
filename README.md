@@ -10,6 +10,8 @@ sidebar_position: 1
 
 [如何优雅的修改第三方包](https://guoxiaxing.github.io/Blog/docs/日常积累/patch-package)
 
+[husky 7.x 使用](https://guoxiaxing.github.io/Blog/docs/日常积累/husky)
+
 ### CSS
 
 [关于 line-height 属性](https://guoxiaxing.github.io/Blog/docs/日常积累/CSS/line-height)
