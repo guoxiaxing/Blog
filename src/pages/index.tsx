@@ -22,16 +22,10 @@ export default function Home(): JSX.Element {
       title={siteConfig.title}
       description="Description will go into a meta tag in <head />"
     >
-      <Homepage />
       <div className={styles.indexImg}>
-        <img src={siteConfig.baseUrl + "img/logo.jpeg"} alt="" />
+        <img src={siteConfig.baseUrl + "img/logo.png"} alt="" />
       </div>
-      <p
-        className="hero__subtitle"
-        style={{ textAlign: "center", marginTop: "20px" }}
-      >
-        美好生活
-      </p>
+      <Homepage />
     </Layout>
   );
 }

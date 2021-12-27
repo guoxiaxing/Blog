@@ -22,6 +22,8 @@ yarn 的出现，主要有以下几个优化点：
 
 [npm vs pnpm vs yarn](https://zhuanlan.zhihu.com/p/137535779)
 
+**yarn 有 resolutions 选项，可以在项目的 package.json 中配置；npm 本身没有提供 resolution 机制，但是可以通过 npm-froce-resolution 这个库实现类似机制**
+
 ## npm 的缓存
 
 在执行 npm install 或 npm update 命令下载依赖后，除了将依赖包安装在 node_modules 目录下外，还会在本地的缓存目录缓存一份。
