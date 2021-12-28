@@ -12,8 +12,6 @@ sidebar_position: 1
 
 [husky 7.x 使用](https://guoxiaxing.github.io/Blog/docs/日常积累/husky)
 
-111
-
 ### CSS
 
 [关于 line-height 属性](https://guoxiaxing.github.io/Blog/docs/日常积累/CSS/line-height)
