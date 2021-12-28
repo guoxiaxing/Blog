@@ -51,7 +51,11 @@ npm run prepare
 npx husky add .husky/pre-commit "npm run cp && git add ."
 ```
 
-> 注意：我这里用的是 && 而不是 &，因为我发现我使用 & 的时候 cp.js 脚本执行完毕之后我的终端并不会退出 🤦‍♀️
+> 注意：我这里用的是 && 而不是 &，因为我发现我使用 & 的时候 cp.js 脚本执行完毕之后我的终端并不会退出 🤦‍♀️，而切偶尔还会出现`git add .`并没有将文件添加到暂存区的情况出现
+
+原因可以看看我下面的这篇文章 👇
+
+[Shell 多个命令间隔符号;、&、&&、| 和 || 区别](https://guoxiaxing.github.io/Blog/docs/日常积累/Linux/shell分隔符)
 
 ### 执行 git 操作
 

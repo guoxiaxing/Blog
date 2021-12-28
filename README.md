@@ -20,6 +20,8 @@ sidebar_position: 1
 
 [硬链接和符号链接](https://guoxiaxing.github.io/Blog/docs/日常积累/Linux/hard-link-and-symbolic-link)
 
+[Shell 多个命令间隔符号;、&、&&、| 和 || 区别](https://guoxiaxing.github.io/Blog/docs/日常积累/Linux/shell分隔符)
+
 ### JavaScript
 
 [深浅拷贝](https://guoxiaxing.github.io/Blog/docs/日常积累/Javascript/clone)
