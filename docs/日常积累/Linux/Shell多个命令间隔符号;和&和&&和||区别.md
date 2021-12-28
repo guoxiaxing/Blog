@@ -10,6 +10,8 @@ tags: [Linux, shell]
 command1 & command2 & command3     # 三个命令同时执行
 ```
 
+用 & 连接的多个符号将同时执行，不管命令是否执行成功
+
 ## ;
 
 ```bash
