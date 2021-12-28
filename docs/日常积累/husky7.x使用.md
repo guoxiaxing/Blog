@@ -48,8 +48,10 @@ npm run prepare
 ### 添加 hook
 
 ```bash
-npx husky add .husky/pre-commit "npm run cp & git add ."
+npx husky add .husky/pre-commit "npm run cp && git add ."
 ```
+
+> 注意：我这里用的是 && 而不是 &，因为我发现我使用 & 的时候 cp.js 脚本执行完毕之后我的终端并不会退出 🤦‍♀️
 
 ### 执行 git 操作
 
