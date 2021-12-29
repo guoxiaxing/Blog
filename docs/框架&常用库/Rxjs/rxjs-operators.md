@@ -558,3 +558,726 @@ const example = source.pipe(startWith(-3, -2, -1));
 // 输出: -3, -2, -1, 0, 1, 2....
 const subscribe = example.subscribe(val => console.log(val));
 ```
+
+## 创建
+
+### of
+
+```typescript
+of(...values, scheduler: Scheduler): Observable
+```
+
+按照顺序发出任意数量的值，立即依次发出
+
+```javascript
+// RxJS v6+
+import { of } from "rxjs";
+// 出任意类型值
+const source = of(
+  { name: "Brian" },
+  [1, 2, 3],
+  function hello() {
+    return "Hello";
+  },
+  2,
+  3,
+  4
+);
+// 输出: {name: 'Brian}, [1,2,3], function hello() { return 'Hello' }, 2, 3, 4
+const subscribe = source.subscribe(val => console.log(val));
+```
+
+### from
+
+```typescript
+from(ish: ObservableInput, mapFn: function, thisArg: any, scheduler: Scheduler): Observable
+```
+
+传入一个具有 Iterator 接口的对象，将其每一个元素依次发出。例如说：数组的每个元素、字符串的每一个字符...
+
+将数组、promise 或迭代器转换成 observable 。
+
+**对于数组和迭代器，所有包含的值都会被作为序列发出！**
+
+**此操作符也可以用来将字符串作为字符的序列发出！**
+
+#### 数组
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+
+// 将数组作为值的序列发出
+const arraySource = from([1, 2, 3, 4, 5]);
+// 输出: 1,2,3,4,5
+const subscribe = arraySource.subscribe(val => console.log(val));
+```
+
+#### 字符串
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+
+// 将字符串作为字符序列发出
+const source = from("Hello World");
+// 输出: 'H','e','l','l','o',' ','W','o','r','l','d'
+const subscribe = source.subscribe(val => console.log(val));
+```
+
+#### 集合
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+
+// 使用 js 的集合
+const map = new Map();
+map.set(1, "Hi");
+map.set(2, "Bye");
+
+const mapSource = from(map);
+// 输出: [1, 'Hi'], [2, 'Bye']
+const subscribe = mapSource.subscribe(val => console.log(val));
+```
+
+#### Promise
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+
+// 发出 promise 的结果
+const promiseSource = from(new Promise(resolve => resolve("Hello World!")));
+// 输出: 'Hello World'
+const subscribe = promiseSource.subscribe(val => console.log(val));
+```
+
+### formEvent
+
+```typescript
+fromEvent(target: EventTargetLike, eventName: string, selector: function): Observable
+```
+
+通过 observable 的形式来给指定的元素绑定事件
+
+将事件转换成 observable 序列。
+
+```typescript
+// RxJS v6+
+import { fromEvent } from "rxjs";
+import { map } from "rxjs/operators";
+
+// 创建发出点击事件的 observable
+const source = fromEvent(document, "click");
+// 映射成给定的事件时间戳
+const example = source.pipe(map(event => `Event time: ${event.timeStamp}`));
+// 输出 (示例中的数字以运行时为准): 'Event time: 7276.390000000001'
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### formPromise
+
+```typescript
+fromPromise(promise: Promise, scheduler: Scheduler): Observable
+```
+
+创建由 promise 转换而来的 observable，并发出 promise 的结果。也可以使用 from 来达到相同的效果
+
+```typescript
+import { of } from "rxjs/observable/of";
+import { fromPromise } from "rxjs/observable/fromPromise";
+import { mergeMap, catchError } from "rxjs/operators";
+
+// 基于输入来决定是 resolve 还是 reject 的示例 promise
+const myPromise = willReject => {
+  return new Promise((resolve, reject) => {
+    if (willReject) {
+      reject("Rejected!");
+    }
+    resolve("Resolved!");
+  });
+};
+// 先发出 true，然后是 false
+const source = of(true, false);
+const example = source.pipe(
+  mergeMap(val =>
+    fromPromise(myPromise(val)).pipe(
+      // 捕获并优雅地处理 reject 的结果
+      catchError(error => of(`Error: ${error}`))
+    )
+  )
+);
+// 输出: 'Error: Rejected!', 'Resolved!'
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### interval
+
+```typescript
+interval(period: number, scheduler: Scheduler): Observable
+```
+
+类似于 setInterval，用于指定一个时间间隔来发出值，从 0 开始，每次递增 1。0, 1, 2....
+
+**传入的时间单位是 ms**
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+
+// 每1秒发出数字序列中的值
+const source = interval(1000);
+// 数字: 0,1,2,3,4,5....
+const subscribe = source.subscribe(val => console.log(val));
+```
+
+### timer
+
+传入两个参数，第一个参数是发出第一个值要等的 ms 数，第二个参数是：发出第一个值之后每个多少 ms 就发出一个值，也是从 0 开始递增
+
+```typescript
+timer(initialDelay: number | Date, period: number, scheduler: Scheduler): Observable
+```
+
+#### 1s 之后发出一个值然后 complete
+
+```typescript
+// RxJS v6+
+import { timer } from "rxjs";
+
+// 1秒后发出0，然后结束，因为没有提供第二个参数
+const source = timer(1000);
+// 输出: 0
+const subscribe = source.subscribe(val => console.log(val));
+```
+
+#### 1 秒后发出值，然后每 2 秒发出值
+
+```typescript
+// RxJS v6+
+import { timer } from "rxjs";
+
+/*
+  timer 接收第二个参数，它决定了发出序列值的频率，在本例中我们在1秒发出第一个值，
+  然后每2秒发出序列值
+*/
+const source = timer(1000, 2000);
+// 输出: 0,1,2,3,4,5......
+const subscribe = source.subscribe(val => console.log(val));
+```
+
+### empty
+
+```typescript
+empty(scheduler: Scheduler): Observable
+```
+
+不发出任何值，直接 complete
+
+**创建一个直接 complete 的 observable，不发出任何值**
+
+```typescript
+// RxJS v6+
+import { empty } from "rxjs";
+
+// 输出: 'Complete!'
+const subscribe = empty().subscribe({
+  next: () => console.log("Next"),
+  complete: () => console.log("Complete!")
+});
+```
+
+### create
+
+```typescript
+create(subscribe: function)
+```
+
+传入一个函数，函数有一个参数，就是 observer，我们可以调用他的 next、error、complete 方法
+
+#### 同步的发出值
+
+```typescript
+// RxJS v6+
+import { Observable } from "rxjs";
+/*
+  创建在订阅函数中发出 'Hello' 和 'World' 的 observable 。
+*/
+const hello = Observable.create(function(observer) {
+  observer.next("Hello");
+  observer.next("World");
+});
+
+// 输出: 'Hello'...'World'
+const subscribe = hello.subscribe(val => console.log(val));
+```
+
+#### 异步的发出多个值
+
+```typescript
+// RxJS v6+
+import { Observable } from "rxjs";
+
+/*
+  每秒自增值并且只发出偶数
+*/
+const evenNumbers = Observable.create(function(observer) {
+  let value = 0;
+  const interval = setInterval(() => {
+    if (value % 2 === 0) {
+      observer.next(value);
+    }
+    value++;
+  }, 1000);
+
+  return () => clearInterval(interval);
+});
+// 输出: 0...2...4...6...8
+const subscribe = evenNumbers.subscribe(val => console.log(val));
+// 10秒后取消订阅
+setTimeout(() => {
+  subscribe.unsubscribe();
+}, 10000);
+```
+
+### range
+
+```typescript
+range(start: number, count: number, scheduler: Scheduler): Observable
+```
+
+给定一个初始值（包含初始值），以及增加的数量，按每次递增一发出值，直到发出的值的个数等于我们传递的 count 的值
+
+依次发出给定区间内的数字。
+
+第一个是起始值，包含起始值，第二个是数量，下一个在上一个的基础上加一。
+
+```typescript
+import { range } from "rxjs";
+
+range(2, 5).subscribe(val => console.log(val)); // 2 3 4 5 6
+```
+
+### throw
+
+```typescript
+throw(error: any, scheduler: Scheduler): Observable
+```
+
+发出一个错误的 observable
+
+```typescript
+// RxJS v6+
+import { throwError } from "rxjs";
+
+// 在订阅上使用指定值来发出错误
+const source = throwError("This is an error!");
+// 输出: 'Error: This is an error!'
+const subscribe = source.subscribe({
+  next: val => console.log(val),
+  complete: () => console.log("Complete!"),
+  error: val => console.log(`Error: ${val}`)
+});
+```
+
+## 错误处理
+
+### catchError
+
+```typescript
+catchError(project : function): Observable
+```
+
+处理 observable 序列中的错误
+
+**catchError 需要返回一个 observable**
+
+#### 捕获 observable 中的错误
+
+```typescript
+// RxJS v6+
+import { throwError, of } from "rxjs";
+import { catchError } from "rxjs/operators";
+// 发出错误
+const source = throwError("This is an error!");
+// 优雅地处理错误，并返回带有错误信息的 observable
+const example = source.pipe(catchError(val => of(`I caught: ${val}`)));
+// 输出: 'I caught: This is an error'
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+#### 捕获拒绝的 Promise
+
+```typescript
+// RxJS v6+
+import { timer, from, of } from "rxjs";
+import { mergeMap, catchError } from "rxjs/operators";
+
+// 创建立即拒绝的 Promise
+const myBadPromise = () =>
+  new Promise((resolve, reject) => reject("Rejected!"));
+// 1秒后发出单个值
+const source = timer(1000);
+// 捕获拒绝的 promise，并返回包含错误信息的 observable
+const example = source.pipe(
+  mergeMap(_ =>
+    from(myBadPromise()).pipe(catchError(error => of(`Bad Promise: ${error}`)))
+  )
+);
+// 输出: 'Bad Promise: Rejected'
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### retry
+
+```typescript
+retry(number: number): Observable
+```
+
+当上游的 observable 发生错误时，按照指定的次数重新执行上游的 observable
+
+```typescript
+// RxJS v6+
+import { interval, of, throwError } from "rxjs";
+import { mergeMap, retry } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+const example = source.pipe(
+  mergeMap(val => {
+    // 抛出错误以进行演示
+    if (val > 5) {
+      return throwError("Error!");
+    }
+    return of(val);
+  }),
+  // 出错的话可以重试2次
+  retry(2)
+);
+/*
+  输出:
+  0..1..2..3..4..5..
+  0..1..2..3..4..5..
+  0..1..2..3..4..5..
+  "Error!: Retried 2 times then quit!"
+*/
+const subscribe = example.subscribe({
+  next: val => console.log(val),
+  error: val => console.log(`${val}: Retried 2 times then quit!`)
+});
+```
+
+### retryWhen
+
+```typescript
+retryWhen(receives: (errors: Observable) => Observable, the: scheduler): Observable
+```
+
+当发生错误时，基于自定义的标准(传入一个函数，函数返回一个 observable，这个 observable complete 的时候就会重试)来重试 observable 序列。
+
+```typescript
+// RxJS v6+
+import { timer, interval } from "rxjs";
+import { map, tap, retryWhen, delayWhen } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+const example = source.pipe(
+  map(val => {
+    if (val > 5) {
+      // 错误将由 retryWhen 接收
+      throw val;
+    }
+    return val;
+  }),
+  retryWhen(errors =>
+    errors.pipe(
+      // 输出错误信息
+      tap(val => console.log(`Value ${val} was too high!`)),
+      // 6秒后重启
+      delayWhen(val => timer(val * 1000))
+    )
+  )
+);
+/*
+  输出:
+  0
+  1
+  2
+  3
+  4
+  5
+  "Value 6 was too high!"
+  --等待6秒后然后重复此过程
+*/
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+## 多播
+
+### multicast
+
+```typescript
+multicast(selector: Function): ConnectableObservable
+```
+
+使用提供 的 Subject 来共享源 observable
+
+#### 使用 Subject 进行 multicast
+
+```typescript
+// RxJS v6+
+import { Subject, interval } from "rxjs";
+import { take, tap, multicast, mapTo } from "rxjs/operators";
+
+// 每2秒发出值并只取前5个
+const source = interval(2000).pipe(take(5));
+
+const example = source.pipe(
+  // 因为我们在下面进行了多播，所以副作用只会调用一次
+  tap(() => console.log("Side Effect #1")),
+  mapTo("Result!")
+);
+
+// 使用 subject 订阅 source 需要调用 connect() 方法
+const multi = example.pipe(multicast(() => new Subject()));
+/*
+  多个订阅者会共享 source 
+  输出:
+  "Side Effect #1"
+  "Result!"
+  "Result!"
+  ...
+*/
+const subscriberOne = multi.subscribe(val => console.log(val));
+const subscriberTwo = multi.subscribe(val => console.log(val));
+// 使用 subject 订阅 source
+multi.connect();
+```
+
+#### 使用 ReplaySubject 进行 multicast
+
+```typescript
+// RxJS v6+
+import { interval, ReplaySubject } from "rxjs";
+import { take, multicast, tap, mapTo } from "rxjs/operators";
+
+// 每2秒发出值并只取前5个
+const source = interval(2000).pipe(take(5));
+
+// 使用 ReplaySubject 的示例
+const example = source.pipe(
+  // 因为我们在下面进行了多播，所以副作用只会调用一次
+  tap(_ => console.log("Side Effect #2")),
+  mapTo("Result Two!")
+);
+// 可以使用任何类型的 subject
+const multi = example.pipe(multicast(() => new ReplaySubject(5)));
+// 使用 subject 订阅 source
+multi.connect();
+
+setTimeout(() => {
+  /*
+   因为使用的是 ReplaySubject，订阅者会接收到 subscription 中的之前所有值。
+   */
+  const subscriber = multi.subscribe(val => console.group(val));
+}, 5000);
+```
+
+### publish
+
+```typescript
+publish() : ConnectableObservable
+```
+
+等价于 multicast(new Subject())
+
+共享源 observable 并通过调用 connect 方法使其变成 Hot Observable。
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { publish, tap } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+const example = source.pipe(
+  // 副作用只会执行1次
+  tap(_ => console.log("Do Something!")),
+  // 不会做任何事直到 connect() 被调用
+  publish()
+);
+
+/*
+  source 不会发出任何值直到 connect() 被调用
+  输出: (5秒后)
+  "Do Something!"
+  "Subscriber One: 0"
+  "Subscriber Two: 0"
+  "Do Something!"
+  "Subscriber One: 1"
+  "Subscriber Two: 1"
+*/
+const subscribe = example.subscribe(val =>
+  console.log(`Subscriber One: ${val}`)
+);
+const subscribeTwo = example.subscribe(val =>
+  console.log(`Subscriber Two: ${val}`)
+);
+
+// 5秒后调用 connect，这会使得 source 开始发出值
+setTimeout(() => {
+  example.connect();
+}, 5000);
+```
+
+如果没有 publish，则输出是这样的
+
+```typescript
+// 每1秒发出值
+const source = interval(1000).pipe(take(5));
+const example = source.pipe(tap(_ => console.log("Do Something!")));
+
+const subscribe = example.subscribe(val =>
+  console.log(`Subscriber One: ${val}`)
+);
+const subscribeTwo = example.subscribe(val =>
+  console.log(`Subscriber Two: ${val}`)
+);
+// Do Something!
+// Subscriber One: 0
+// Do Something!
+// Subscriber Two: 0
+// Do Something!
+// Subscriber One: 1
+// Do Something!
+// Subscriber Two: 1
+// Do Something!
+// Subscriber One: 2
+// Do Something!
+// Subscriber Two: 2
+// Do Something!
+// Subscriber One: 3
+// Do Something!
+// Subscriber Two: 3
+// Do Something!
+// Subscriber One: 4
+// Do Something!
+// Subscriber Two: 4
+```
+
+### share
+
+```typescript
+share(): Observable
+```
+
+等价于
+
+multicast(() => new Subject()).pipe(refCount())
+
+当原来订阅的 observer 为 0，在有新的 observer 来订阅的时候会重新订阅 source（因为 refCount 会在 observer 为 0 的时候取消订阅，再有新的 observer 的时候又会重新订阅）；否则的话就共享 source。当源 complete/error 的时候再有新的 observer 也会导致源重新执行
+
+在多个订阅者间共享源 observable 。
+
+```typescript
+// RxJS v6+
+import { timer } from "rxjs";
+import { tap, mapTo, share } from "rxjs/operators";
+
+// 1秒后发出值
+const source = timer(1000);
+// 输出副作用，然后发出结果
+const example = source.pipe(
+  tap(() => console.log("***SIDE EFFECT***")),
+  mapTo("***RESULT***")
+);
+
+/*
+  ***不共享的话，副作用会执行两次***
+  输出: 
+  "***SIDE EFFECT***"
+  "***RESULT***"
+  "***SIDE EFFECT***"
+  "***RESULT***"
+*/
+const subscribe = example.subscribe(val => console.log(val));
+const subscribeTwo = example.subscribe(val => console.log(val));
+
+// 在多个订阅者间共享 observable
+const sharedExample = example.pipe(share());
+/*
+   ***共享的话，副作用只执行一次***
+  输出:
+  "***SIDE EFFECT***"
+  "***RESULT***"
+  "***RESULT***"
+*/
+const subscribeThree = sharedExample.subscribe(val => console.log(val));
+const subscribeFour = sharedExample.subscribe(val => console.log(val));
+```
+
+### shareReplay
+
+```typescript
+shareReplay(bufferSize?: number, windowTime?: number, scheduler?I IScheduler): Observable
+```
+
+共享源 observable 并重放指定次数的发出。
+
+- shareReplay 只会在源 observable complete/error 的时候才自动取消对源 observable 的订阅，后来的订阅者共享我们设置的 bufferSize 的值，并且不会再重新订阅源 observable
+
+- 对于源 observable 没有 complete/error 的情况，那么始终共享源 observable，无论 observer 的个数如何
+
+#### 为什么使用 shareReplay？
+
+通常啊，当有副作用或繁重的计算时，你不希望在多个订阅者之间重复执行时，会使用 shareReplay 。 当你知道流的后来订阅者也需要访问之前发出的值，shareReplay 在这种场景下也是有价值的。 这种在订阅过程中重放值的能力是区分 share 和 shareReplay 的关键。
+
+例如，加入你有一个发出最后访问 url 的 observable 。 在第一个示例中，我们将使用 share:
+
+```typescript
+// 使用 subject 模拟 url 的变化
+const routeEnd = new Subject<{ data: any; url: string }>();
+
+// 提取 url 并与后来订阅者共享
+const lastUrl = routeEnd.pipe(pluck("url"), share());
+
+// 起始订阅者是必须的
+const initialSubscriber = lastUrl.subscribe(console.log);
+
+// 模拟路由变化
+routeEnd.next({ data: {}, url: "my-path" });
+
+// 没有任何输出 原因是：源 observable 并没有 complete，所以也不会在又有新的observer的时候重新订阅源，所以就收不到值
+const lateSubscriber = lastUrl.subscribe(console.log);
+```
+
+上面的示例中，lateSubscriber 订阅源 observable 后没有任何输出。 现在我们想要访问订阅中的最新发出值，可以通过 shareReplay 来完成:
+
+```typescript
+import { Subject } from "rxjs/Subject";
+import { ReplaySubject } from "rxjs/ReplaySubject";
+import { pluck, share, shareReplay, tap } from "rxjs/operators";
+
+// 使用 subject 模拟 url 的变化
+const routeEnd = new Subject<{ data: any; url: string }>();
+
+// 提取 url 并与后来订阅者共享
+const lastUrl = routeEnd.pipe(
+  tap(_ => console.log("executed")),
+  pluck("url"),
+  // 默认为所有值，因此我们将其设置为仅保留并重放最后一个值
+  shareReplay(1)
+);
+
+// 起始订阅者是必须的
+const initialSubscriber = lastUrl.subscribe(console.log);
+
+// 模拟路由变化
+// 输出: 'executed', 'my-path'
+routeEnd.next({ data: {}, url: "my-path" });
+
+// 输出: 'my-path'
+const lateSubscriber = lastUrl.subscribe(console.log);
+```
