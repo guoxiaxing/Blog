@@ -859,10 +859,10 @@ import { range } from "rxjs";
 range(2, 5).subscribe(val => console.log(val)); // 2 3 4 5 6
 ```
 
-### throw
+### throwError
 
 ```typescript
-throw(error: any, scheduler: Scheduler): Observable
+throwError(error: any, scheduler: Scheduler): Observable
 ```
 
 发出一个错误的 observable
