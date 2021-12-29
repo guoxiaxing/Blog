@@ -26,6 +26,8 @@ sidebar_position: 1
 
 [深浅拷贝](https://guoxiaxing.github.io/Blog/docs/日常积累/Javascript/clone)
 
+[如何优雅的对数组进行分组](https://guoxiaxing.github.io/Blog/docs/日常积累/Javascript/array-groupBy)
+
 ### 包管理工具
 
 #### pnpm
