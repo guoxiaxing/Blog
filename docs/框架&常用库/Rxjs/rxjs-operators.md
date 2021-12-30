@@ -1281,3 +1281,643 @@ routeEnd.next({ data: {}, url: "my-path" });
 // 输出: 'my-path'
 const lateSubscriber = lastUrl.subscribe(console.log);
 ```
+
+## 过滤
+
+### first
+
+```typescript
+first(predicate: function, select: function)
+```
+
+**发出第一个值或第一个通过给定表达式的值。**
+
+> first 和 take(1)的区别：如果数据源返回空，如果使用 first 则会报错，而 take(1)会返回空值
+
+```typescript
+of()
+  .pipe(first())
+  .subscribe(
+    () => console.log(123),
+    e => console.log(e) // Error {}
+  );
+```
+
+#### 发出序列中的第一个值
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { first } from "rxjs/operators";
+
+const source = from([1, 2, 3, 4, 5]);
+// 没有参数则发出第一个值
+const example = source.pipe(first());
+// 输出: "First value: 1"
+const subscribe = example.subscribe(val => console.log(`First value: ${val}`));
+```
+
+#### 发出序列中第一个通过条件函数的值
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { first } from "rxjs/operators";
+
+const source = from([1, 2, 3, 4, 5]);
+// 发出通过测试的第一项
+const example = source.pipe(first(num => num === 5));
+// 输出: "First to pass test: 5"
+const subscribe = example.subscribe(val =>
+  console.log(`First to pass test: ${val}`)
+);
+```
+
+#### 设置默认值
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { first } from "rxjs/operators";
+
+const source = from([1, 2, 3, 4, 5]);
+// 没有值通过的话则发出默认值
+const example = source.pipe(first(val => val > 5, "Nothing"));
+// 输出: 'Nothing'
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### last
+
+```typescript
+last(predicate: function): Observable
+```
+
+根据提供的表达式，在源 observable **完成**时发出它的最后一个值/满足表达式条件的最后一个值。
+
+#### 序列中的最后一个值
+
+```typescript
+// RxJS v6+
+import { from } from 'rxjs';
+import { last } 'rxjs/operators';
+
+const source = from([1, 2, 3, 4, 5]);
+// 没有参数则发出最后一个值
+const example = source.pipe(last());
+// 输出: "Last value: 5"
+const subscribe = example.subscribe(val => console.log(`Last value: ${val}`));
+```
+
+#### 序列中最后一个满足条件的值
+
+```typescript
+// RxJS v6+
+import { from } from 'rxjs';
+import { last } 'rxjs/operators';
+
+const source = from([1, 2, 3, 4, 5]);
+// 发出最后一个偶数
+const exampleTwo = source.pipe(last(num => num % 2 === 0));
+// 输出: "Last to pass test: 4"
+const subscribeTwo = exampleTwo.subscribe(val =>
+  console.log(`Last to pass test: ${val}`)
+);
+```
+
+#### 可以设置默认值
+
+```typescript
+// RxJS v6+
+import { from } from 'rxjs';
+import { last } 'rxjs/operators';
+
+const source = from([1, 2, 3, 4, 5]);
+// 没有值通过的话则发出默认值
+const exampleTwo = source.pipe(last(v => v > 5, 'Nothing!'));
+// 输出: 'Nothing!'
+const subscribeTwo = exampleTwo.subscribe(val => console.log(val));
+```
+
+### filter
+
+```typescript
+filter(select: Function, thisArg: any): Observable
+```
+
+发出符合给定条件的值。类似于数组的 filter
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { filter } from "rxjs/operators";
+
+// 发出 (1,2,3,4,5)
+const source = from([1, 2, 3, 4, 5]);
+// 过滤掉奇数
+const example = source.pipe(filter(num => num % 2 === 0));
+// 输出: "Even number: 2", "Even number: 4"
+const subscribe = example.subscribe(val => console.log(`Even number: ${val}`));
+```
+
+### distinctUntilChanged
+
+```typescript
+distinctUntilChanged(compare: function): Observable
+```
+
+当前值和前一个值不同时才发出当前值。
+
+**distinctUntilChanged 默认使用 === 进行比较, 对象引用必须匹配！**
+
+#### 对基础值使用 distinctUntilChanged
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { distinctUntilChanged } from "rxjs/operators";
+
+// 基于最新发出的值进行比较，只输出不同的值
+const myArrayWithDuplicatesInARow = from([1, 1, 2, 2, 3, 1, 2, 3]);
+
+const distinctSub = myArrayWithDuplicatesInARow
+  .pipe(distinctUntilChanged())
+  // 输出: 1,2,3,1,2,3
+  .subscribe(val => console.log("DISTINCT SUB:", val));
+
+const nonDistinctSub = myArrayWithDuplicatesInARow
+  // 输出 : 1,1,2,2,3,1,2,3
+  .subscribe(val => console.log("NON DISTINCT SUB:", val));
+```
+
+#### 对对象使用 distinctUntilChanged
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { distinctUntilChanged } from "rxjs/operators";
+
+const sampleObject = { name: "Test" };
+// 对象必须有相同的引用
+const myArrayWithDuplicateObjects = from([
+  sampleObject,
+  sampleObject,
+  sampleObject
+]);
+// 基于最新发出的值进行比较，只输出不同的对象
+const nonDistinctObjects = myArrayWithDuplicateObjects
+  .pipe(distinctUntilChanged())
+  // 输出: 'DISTINCT OBJECTS: {name: 'Test'}
+  .subscribe(val => console.log("DISTINCT OBJECTS:", val));
+```
+
+### ignoreElements
+
+```typescript
+ignoreElements(): Observable
+```
+
+忽略发出的值，仅仅发出 error/complete
+
+#### 只显示 complete
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { take, ignoreElements } from "rxjs/operators";
+
+// 每100毫秒发出值
+const source = interval(100);
+// 略所有值，只发出 complete
+const example = source.pipe(take(5), ignoreElements());
+// 输出: "COMPLETE!"
+const subscribe = example.subscribe(
+  val => console.log(`NEXT: ${val}`),
+  val => console.log(`ERROR: ${val}`),
+  () => console.log("COMPLETE!")
+);
+```
+
+#### 只显示 error
+
+```typescript
+// RxJS v6+
+import { interval, throwError, of } from "rxjs";
+import { mergeMap, ignoreElements } from "rxjs/operators";
+
+// 每100毫秒发出值
+const source = interval(100);
+// 忽略所有值，只发出 error
+const error = source.pipe(
+  mergeMap(val => {
+    if (val === 4) {
+      return throwError(`ERROR AT ${val}`);
+    }
+    return of(val);
+  }),
+  ignoreElements()
+);
+// 输出: "ERROR: ERROR AT 4"
+const subscribe = error.subscribe(
+  val => console.log(`NEXT: ${val}`),
+  val => console.log(`ERROR: ${val}`),
+  () => console.log("SECOND COMPLETE!")
+);
+```
+
+### sample
+
+```typescript
+sample(sampler: Observable): Observable
+```
+
+对源 observable 进行取样，当传入的 observable 发出值的时候，发出源 observable 的值。
+
+#### 每 2 秒对源 observable 取样
+
+```typescript
+// RxJS v6+
+import { interval } from 'rxjs';
+import { sample } 'rxjs/operators';
+
+// 每1秒发出值
+const source = interval(1000);
+// 每2秒对源 observable 最新发出的值进行取样
+const example = source.pipe(sample(interval(2000)));
+// 输出: 2..4..6..8..
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+#### 区分拖拽和点击
+
+```typescript
+// RxJS v6+
+import { fromEvent, merge } from "rxjs";
+import { sample, mapTo } from "rxjs/operators";
+
+const listener = merge(
+  fromEvent(document, "mousedown").pipe(mapTo(false)),
+  fromEvent(document, "mousemove").pipe(mapTo(true))
+)
+  .pipe(sample(fromEvent(document, "mouseup")))
+  .subscribe(isDragging => {
+    console.log("Were you dragging?", isDragging);
+  });
+```
+
+### single
+
+```typescript
+single(a: Function): Observable
+```
+
+发出通过表达式的单一项。**发出满足表达式的第一个值，然后 complete**
+
+#### 发出通过断言的第一个数字
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { single } from "rxjs/operators";
+
+// 发出 (1,2,3,4,5)
+const source = from([1, 2, 3, 4, 5]);
+// 发出匹配断言函数的一项
+const example = source.pipe(single(val => val === 4));
+// 输出: 4
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### debounce
+
+```typescript
+debounce(durationSelector: function): Observable
+```
+
+根据一个选择器函数，舍弃掉在两次输出之间小于指定时间的发出值。
+
+传入一个函数，该函数返回接受的参数就是上游的 observable 发出的值，然后这个函数返回的是一个 observable
+
+如果在源 observable 发出下一个值之前，内部函数返回的 observable 没有发出值，则发出该值，否则不发出当前值
+
+**内部的 observable 发出值的时候如果源 observable 的下一个值还没有发出，则源 observable 发出的下一个值会被发出。**
+
+```typescript
+// RxJS v6+
+import { of, timer } from "rxjs";
+import { debounce } from "rxjs/operators";
+
+// 发出四个字符串
+const example = of("WAIT", "ONE", "SECOND", "Last will display");
+/*
+  只有在最后一次发送后再经过一秒钟，才会发出值，并抛弃在此之前的所有其他值
+*/
+const debouncedExample = example.pipe(debounce(() => timer(1000)));
+/*
+    在这个示例中，所有的值都将被忽略，除了最后一个
+    输出: 'Last will display'
+*/
+const subscribe = debouncedExample.subscribe(val => console.log(val));
+```
+
+### debounceTime
+
+```typescript
+debounceTime(dueTime: number, scheduler: Scheduler): Observable
+```
+
+**舍弃掉在两次输出之间小于指定时间的发出值**
+
+```typescript
+// RxJS v6+
+import { fromEvent, timer } from "rxjs";
+import { debounceTime, map } from "rxjs/operators";
+
+const input = document.getElementById("example");
+
+// 对于每次键盘敲击，都将映射成当前输入值
+const example = fromEvent(input, "keyup").pipe(map(i => i.currentTarget.value));
+
+// 在两次键盘敲击之间等待0.5秒方才发出当前值，
+// 并丢弃这0.5秒内的所有其他值
+const debouncedInput = example.pipe(debounceTime(500));
+
+// 输出值
+const subscribe = debouncedInput.subscribe(val => {
+  console.log(`Debounced Input: ${val}`);
+});
+```
+
+源 observable 发出的相邻的两个值之前的时间间隔大于我们设置的时间的才会发出下一个值
+
+### throttle
+
+```typescript
+throttle(durationSelector: function(value): Observable | Promise): Observable
+```
+
+以某个时间间隔为阈值，在 durationSelector 完成前将抑制新值的发出
+
+在传入的第二个 observable 发出值时发出上游的 observable 的最新值
+
+源 observable 发出一个值之后，在传入的函数返回的 observable 发出值之前忽略源 observable 发出的值，当传入的 observable 发出值之后，再发出此时之后源 observable 发出的第一个值。
+
+#### 节流 2 秒，时间由第 2 个 observable 决定
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { throttle } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+// 节流2秒后才发出最新值
+const example = source.pipe(throttle(val => interval(2000)));
+// 输出: 0...3...6...9
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+#### 使用 promise 进行节流
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { throttle, map } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+// 基于 source 自增地增加解析的时间
+const promise = val =>
+  new Promise(resolve =>
+    setTimeout(() => resolve(`Resolved: ${val}`), val * 100)
+  );
+// 当 promise 解析时发出 source 的项
+const example = source.pipe(
+  throttle(promise),
+  map(val => `Throttled off Promise: ${val}`)
+);
+
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### throttleTime
+
+```typescript
+throttleTime(duration: number, scheduler: Scheduler): Observable
+```
+
+**当指定的持续时间经过后发出源 observable 发出的第一个值。**
+
+#### 每 5 秒接收最新值
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { throttleTime } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+/*
+  节流5秒
+  节流结束前发出的最后一个值将从源 observable 中发出
+*/
+const example = source.pipe(throttleTime(5000));
+// 输出: 0...6...12
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+#### 对合并的 observable 节流
+
+```typescript
+// RxJS v6+
+import { interval, merge } from "rxjs";
+import { throttleTime, ignoreElements } from "rxjs/operators";
+
+const source = merge(
+  //  每0.75秒发出值
+  interval(750),
+  // 每1秒发出值
+  interval(1000)
+);
+// 在发出值的中间进行节流
+const example = source.pipe(throttleTime(1200));
+// 输出: 0...1...4...4...8...7
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### take
+
+```typescript
+take(count: number): Observable
+```
+
+发出上游的前 count 个值，然后 complete 该流
+
+当只对开头的一组值感兴趣时，你想要的便是 take 操作符。
+
+如果想基于某个逻辑或另一个 observable 来取任意数量的值，你可以 takeUntil 或 takeWhile！
+
+take 与 skip 是相反的，它接收起始的 N 个值，而 skip 会跳过起始的 N 个值。
+
+#### 从源 observable 中取前 5 个值
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { take } from "rxjs/operators";
+
+// 每1秒发出值
+const interval$ = interval(1000);
+// 取前5个发出的值
+const example = interval$.pipe(take(5));
+// 输出: 0,1,2,3,4
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+#### 取得首次点击的坐标
+
+```html
+<div id="locationDisplay">
+  Where would you click first?
+</div>
+```
+
+```typescript
+// RxJS v6+
+import { fromEvent } from "rxjs";
+import { take, tap } from "rxjs/operators";
+
+const oneClickEvent = fromEvent(document, "click").pipe(
+  take(1),
+  tap(v => {
+    document.getElementById(
+      "locationDisplay"
+    ).innerHTML = `Your first click was on location ${v.screenX}:${v.screenY}`;
+  })
+);
+
+const subscribe = oneClickEvent.subscribe();
+```
+
+### takeUntil
+
+```typescript
+takeUntil(notifier: Observable): Observable
+```
+
+上游的 observable 一直可以发出值，直到内部传入的 observable 发出值，则上游的 observable 完成
+
+#### 取值直到 timer 发出
+
+```typescript
+// RxJS v6+
+import { interval, timer } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+// 5秒后发出值
+const timer$ = timer(5000);
+// 当5秒后 timer 发出值时， source 则完成
+const example = source.pipe(takeUntil(timer$));
+// 输出: 0,1,2,3
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### takeWhile
+
+```typescript
+takeWhile(predicate: function(value, index): boolean): Observable
+```
+
+发出值，直到提供的表达式结果为 false 。
+
+#### takeWhile 和 filter 的区别
+
+```typescript
+// RxJS v6+
+import { of } from "rxjs";
+import { takeWhile, filter } from "rxjs/operators";
+
+// 发出 3, 3, 3, 9, 1, 4, 5, 8, 96, 3, 66, 3, 3, 3
+const source = of(3, 3, 3, 9, 1, 4, 5, 8, 96, 3, 66, 3, 3, 3);
+
+// 允许值通过直到源发出的值不等于3，然后完成
+// 输出: [3, 3, 3]
+source
+  .pipe(takeWhile(it => it === 3))
+  .subscribe(val => console.log("takeWhile", val));
+
+// 输出: [3, 3, 3, 3, 3, 3, 3]
+source
+  .pipe(filter(it => it === 3))
+  .subscribe(val => console.log("filter", val));
+```
+
+### skip
+
+```typescript
+skip(the: Number): Observable
+```
+
+跳过上游 observable 发出的前 n 个值
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { skip, filter } from "rxjs/operators";
+
+const numArrayObs = from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+// 3,4,5...
+const skipObs = numArrayObs.pipe(skip(2)).subscribe(console.log);
+
+// 3,4,5...
+const filterObs = numArrayObs
+  .pipe(filter((val, index) => index > 1))
+  .subscribe(console.log);
+
+// 同样的输出！
+```
+
+### skipUntil
+
+```typescript
+skipUntil(the: Observable): Observable
+```
+
+跳过源 observable 发出的值，直到传入的 observable 发出第一个值之后，源 observable 之后发出的值才会被发出
+
+```typescript
+// RxJS v6+
+import { interval, timer } from "rxjs";
+import { skipUntil } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+// 跳过源 observable 发出的值，直到内部 observable 发出值 (6s后)
+const example = source.pipe(skipUntil(timer(6000)));
+// 输出: 5...6...7...8........
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### skipWhile
+
+```typescript
+skipUntil(the: Observable): Observable
+```
+
+跳过源 observable 发出的值，直到传入的表达式为 false，源 observable 之后发出的值都会被发出
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { skipWhile } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+// 当源 observable 发出的值小于5的时候，则跳过该值
+const example = source.pipe(skipWhile(val => val < 5));
+// 输出: 5...6...7...8........
+const subscribe = example.subscribe(val => console.log(val));
+```
