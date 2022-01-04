@@ -38,6 +38,14 @@ sidebar_position: 1
 
 [关于 yarn 你需要知道的](https://guoxiaxing.github.io/Blog/docs/日常积累/包管理工具/yarn/about-yarn)
 
+### git
+
+[相关文章](https://guoxiaxing.github.io/Blog/docs/日常积累/git/articles)
+
+### GitHub Actions
+
+[相关文章](https://guoxiaxing.github.io/Blog/docs/日常积累/GitHub%20Actions/articles)
+
 ## 框架&常用库
 
 ### Rxjs
