@@ -1921,3 +1921,514 @@ const example = source.pipe(skipWhile(val => val < 5));
 // 输出: 5...6...7...8........
 const subscribe = example.subscribe(val => console.log(val));
 ```
+
+## 转换
+
+### map
+
+```typescript
+map(project: Function, thisArg: any): Observable
+```
+
+将源 observable 发出的值通过传入的函数进行转换，类似于数组的 map 操作
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { map } from "rxjs/operators";
+
+// 发出 (1,2,3,4,5)
+const source = from([1, 2, 3, 4, 5]);
+// 每个数字加10
+const example = source.pipe(map(val => val + 10));
+// 输出: 11,12,13,14,15
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### mapTo
+
+```typescript
+mapTo(value: any): Observable
+```
+
+将源 observable 发出的所有值都转换为传入的 value 值发出
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { mapTo } from "rxjs/operators";
+
+// 每2秒发出值
+const source = interval(2000);
+// 将所有发出值映射成同一个值
+const example = source.pipe(mapTo("HELLO WORLD!"));
+// 输出: 'HELLO WORLD!'...'HELLO WORLD!'...'HELLO WORLD!'...
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### reduce
+
+```typescript
+public reduce(accumulator: function(acc: R, value: T, index: number): R, seed: R): Observable<R>
+```
+
+类似于数组的 reduce 函数
+
+在源 Observalbe 上应用 accumulator (累加器) 函数，然后当源 Observable 完成时，返回 累加的结果，可以提供一个可选的 seed 值(初始值)。
+使用 accumulator (累加器) 函数将源 Observable 所发出的所有值归并在一起， 该函数知道如何将新的源值纳入到过往的累加结果中。
+
+**注意，reduce 只会发出一个值， 并且是当源 Observable 完成时才发出。它等价于使用 scan 操作符后面再跟 last 操作符。**
+
+```typescript
+// RxJS v6+
+import { of } from "rxjs";
+import { reduce } from "rxjs/operators";
+
+const source = of(1, 2, 3, 4);
+const example = source.pipe(reduce((acc, val) => acc + val));
+// 输出: Sum: 10'
+const subscribe = example.subscribe(val => console.log("Sum:", val));
+```
+
+### scan
+
+```typescript
+public scan(accumulator: function(acc: R, value: T, index: number): R, seed: T | R): Observable<R>
+```
+
+会将 accumulator 函数每次累加的结果都发出，也就是说该操作符发出值的速率和源 observable 发出值的速率相同
+
+类似于 reduce，但是 reduce 值发出最终的结果，但是 scan 每次 accumulator 函数的返回值都会被发出
+
+```typescript
+// RxJS v6+
+import { Subject } from "rxjs";
+import { scan } from "rxjs/operators";
+
+const subject = new Subject();
+// scan 示例，随着时间的推移构建对象
+const example = subject.pipe(
+  scan((acc, curr) => Object.assign({}, acc, curr), {})
+);
+// 输出累加值
+const subscribe = example.subscribe(val =>
+  console.log("Accumulated object:", val)
+);
+// subject 发出的值会被添加成对象的属性
+// {name: 'Joe'}
+subject.next({ name: "Joe" });
+// {name: 'Joe', age: 30}
+subject.next({ age: 30 });
+// {name: 'Joe', age: 30, favoriteLanguage: 'JavaScript'}
+subject.next({ favoriteLanguage: "JavaScript" });
+```
+
+### pluck
+
+```typescript
+public pluck(properties: ...string): Observable
+```
+
+从源 observable 发出的对象中挑出指定的属性
+
+将每个源值(对象)映射成它指定的嵌套属性。
+
+类似于 map，但仅用于选择每个发出对象的某个嵌套属性。
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { pluck } from "rxjs/operators";
+
+const source = from([
+  { name: "Joe", age: 30, job: { title: "Developer", language: "JavaScript" } },
+  // 当找不到 job 属性的时候会返回 undefined
+  { name: "Sarah", age: 35 }
+]);
+// 提取 job 中的 title 属性
+const example = source.pipe(pluck("job", "title"));
+// 输出: "Developer" , undefined
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### partition
+
+```typescript
+public partition(predicate: function(value: T, index: number): boolean, thisArg: any): [Observable<T>, Observable<T>]
+```
+
+将源 Observable 一分为二，一个是所有满足 predicate 函数的值，另一个是所有 不满足 predicate 的值。
+
+它很像 filter，但是返回两个 Observables ： 一个像 filter 的输出， 而另一个是所有不符合条件的值。
+
+```typescript
+// RxJS v6+
+import { from, merge } from "rxjs";
+import { partition, map } from "rxjs/operators";
+
+const source = from([1, 2, 3, 4, 5, 6]);
+// 第一个值(events)返回 true 的数字集合，第二个值(odds)是返回 false 的数字集合
+const [evens, odds] = source.pipe(partition(val => val % 2 === 0));
+/*
+  输出:
+  "Even: 2"
+  "Even: 4"
+  "Even: 6"
+  "Odd: 1"
+  "Odd: 3"
+  "Odd: 5"
+*/
+const subscribe = merge(
+  evens.pipe(map(val => `Even: ${val}`)),
+  odds.pipe(map(val => `Odd: ${val}`))
+).subscribe(val => console.log(val));
+```
+
+### groupBy
+
+```typescript
+public groupBy(keySelector: function(value: T): K, elementSelector: function(value: T): R, durationSelector: function(grouped: GroupedObservable<K, R>): Observable<any>): Observable<GroupedObservable<K, R>>
+```
+
+根据指定条件将源 Observable 发出的值进行分组，并将这些分组作为 GroupedObservables 发出，每一个分组都是一个 GroupedObservable 。
+
+**在源 observable complete 的时候会将分组的结果依次发出**
+
+> GroupedObservable: 该 Observable 表示因具有共同的键而属于同一个组的值 。由 GroupedObservable 发出的值 来自于源 Observable 。共同的键可作为 GroupedObservable 实例上的 key 字段。
+
+```typescript
+// RxJS v6+
+import { from } from "rxjs";
+import { groupBy, mergeMap, toArray } from "rxjs/operators";
+
+const people = [
+  { name: "Sue", age: 25 },
+  { name: "Joe", age: 30 },
+  { name: "Frank", age: 25 },
+  { name: "Sarah", age: 35 }
+];
+// 发出每个 people
+const source = from(people);
+// 根据 age 分组
+const example = source.pipe(
+  groupBy(person => person.age),
+  // 为每个分组返回一个数组
+  mergeMap(group => group.pipe(toArray()))
+);
+/*
+  输出:
+  [{age: 25, name: "Sue"},{age: 25, name: "Frank"}]
+  [{age: 30, name: "Joe"}]
+  [{age: 35, name: "Sarah"}]
+*/
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### expand
+
+```typescript
+public expand(project: function(value: T, index: number), concurrent: number): Observable
+```
+
+类似于 mergeMap，但是传入函数的返回值会递归该函数函数
+
+返回的 Observable 基于应用一个函数来发送项，该函数提供给源 Observable 发出的每个项， 并返回一个 Observable，然后合并这些作为结果的 Observable，并发出本次合并的结果。 expand 会重新发出在输出 Observable 上的每个源值。然后，将每个输出值传给投射函数， 该函数返回要合并到输出 Observable 上的内部 Observable 。由投影产生的那些输出值也会 被传给投射函数以产生新的输出值。这就是 expand 如何进行递归的。
+
+```typescript
+// RxJS v6+
+import { interval, of } from "rxjs";
+import { expand, take } from "rxjs/operators";
+
+// 发出 2
+const source = of(2);
+const example = source.pipe(
+  // 递归调用提供的函数
+  expand(val => {
+    // 2,3,4,5,6
+    console.log(`Passed value: ${val}`);
+    // 3,4,5,6
+    return of(1 + val);
+  }),
+  // 用5次
+  take(5)
+);
+/*
+    "RESULT: 2"
+    "Passed value: 2"
+    "RESULT: 3"
+    "Passed value: 3"
+    "RESULT: 4"
+    "Passed value: 4"
+    "RESULT: 5"
+    "Passed value: 5"
+    "RESULT: 6"
+    "Passed value: 6"
+*/
+// 输出: 2,3,4,5,6
+const subscribe = example.subscribe(val => console.log(`RESULT: ${val}`));
+```
+
+### concatMap
+
+```typescript
+public concatMap(project: function(value: T, ?index: number): ObservableInput, resultSelector: function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any): Observable
+```
+
+将值映射成内部 observable，并按顺序订阅和发出。
+
+所以最后发出的值是内部 observable 产生的值。
+
+**如果源值不断的到达并且速度快于内部 Observables 完成的速度, 它会导致内存问题， 因为内部的 Observable 在无限制的缓冲区中聚集，以等待轮流订阅。所以内部的 observable 是一个可以完成的 observable**
+
+#### concatMap 和 mergeMap 之间的区别
+
+注意 concatMap 和 mergeMap 之间的区别。 因为 concatMap 之前前一个内部 observable 完成后才会订阅下一个， source 中延迟 2000ms 值会先发出。 对比的话， mergeMap 会立即订阅所有内部 observables， 延迟少的 observable (1000ms) 会先发出值，然后才是 2000ms 的 observable 。
+
+```typescript
+// RxJS v6+
+import { of } from "rxjs";
+import { concatMap, delay, mergeMap } from "rxjs/operators";
+
+// 发出延迟值
+const source = of(2000, 1000);
+// 将内部 observable 映射成 source，当前一个完成时发出结果并订阅下一个
+const example = source.pipe(
+  concatMap(val => of(`Delayed by: ${val}ms`).pipe(delay(val)))
+);
+// 输出: With concatMap: Delayed by: 2000ms, With concatMap: Delayed by: 1000ms
+const subscribe = example.subscribe(val =>
+  console.log(`With concatMap: ${val}`)
+);
+
+// 展示 concatMap 和 mergeMap 之间的区别
+const mergeMapExample = source
+  .pipe(
+    // 只是为了确保 meregeMap 的日志晚于 concatMap 示例
+    delay(5000),
+    mergeMap(val => of(`Delayed by: ${val}ms`).pipe(delay(val)))
+  )
+  .subscribe(val => console.log(`With mergeMap: ${val}`));
+```
+
+### mergeMap
+
+```typescript
+public mergeMap(project: function(value: T, ?index: number): ObservableInput, resultSelector: function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any, concurrent: number): Observable
+```
+
+将源 observable 发出的值 映射成 observable 并发出值。这些内部的 observable 会被同时订阅。
+
+**当想要打平内部 observable 并手动控制内部订阅数量时，此操作符是最适合的。**
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { mergeMap, take } from "rxjs/operators";
+
+// 每1秒发出值
+const source = interval(1000);
+
+const example = source.pipe(
+  mergeMap(
+    //project
+    val => interval(5000).pipe(take(2)),
+    //resultSelector
+    (oVal, iVal, oIndex, iIndex) => [oIndex, oVal, iIndex, iVal],
+    //concurrent
+    2
+  )
+);
+/*
+        输出:
+        [0, 0, 0, 0] <--第一个内部 observable
+        [1, 1, 0, 0] <--第二个内部 observable
+        [0, 0, 1, 1] <--第一个内部 observable
+        [1, 1, 1, 1] <--第二个内部 observable
+        [2, 2, 0, 0] <--第三个内部 observable
+        [3, 3, 0, 0] <--第四个内部 observable
+*/
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### switchMap
+
+如果源 observable 的下一个值发出的时候，前一个 observable 映射成的内部 observable 还没有 complete，那么就会退订这个内部的 observable，订阅这个新的 observable
+
+```typescript
+public switchMap(project: function(value: T, ?index: number): ObservableInput, resultSelector: function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any): Observable
+```
+
+**switchMap 和其他打平操作符的主要区别是它具有取消效果。在每次发出时，会取消前一个内部 observable (你所提供函数的结果) 的订阅，然后订阅一个新的 observable 。你可以通过短语切换成一个新的 observable 来记忆它。**
+
+返回的 Observable 基于应用一个函数来发送项，该函数提供给源 Observable 发出的每个项， 并返回一个(所谓的“内部”) Observable 。每次观察到这些内部 Observables 的其中一个时， 输出 Observable 将开始发出该内部 Observable 所发出的项。当发出一个新的内部 Observable 时，switchMap 会停止发出先前发出的内部 Observable 并开始发出新的内部 Observable 的值。后续的内部 Observables 也是如此。
+
+```typescript
+// RxJS v6+
+import { interval, fromEvent } from "rxjs";
+import { switchMap, mapTo } from "rxjs/operators";
+
+// 发出每次点击
+const source = fromEvent(document, "click");
+// 如果3秒内发生了另一次点击，则消息不会被发出
+const example = source.pipe(
+  switchMap(val => interval(3000).pipe(mapTo("Hello, I made it!")))
+);
+// (点击)...3s...'Hello I made it!'...(点击)...2s(点击)...
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### exhaustMap
+
+与 switchMap 正好相反,映射成内部 observable，忽略其他值直到该 observable 完成。
+
+```typescript
+public exhaustMap(project: function(value: T, ?index: number): ObservableInput, resultSelector: function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any): Observable
+```
+
+返回的 Observable 基于应用一个函数来发送项，该函数提供给源 Observable 发出的每个项， 并返回一个(所谓的“内部”) Observable 。当它将源值投射成 Observable 时，输出 Observable 开始发出由投射的 Observable 发出的项。然而，如果前一个投射的 Observable 还未完成的话， 那么 exhaustMap 会忽略每个新投射的 Observable 。一旦完成，它将接受并打平下一个 内部 Observable ，然后重复此过程。
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { exhaustMap, tap, take } from "rxjs/operators";
+
+const firstInterval = interval(1000).pipe(take(10));
+const secondInterval = interval(1000).pipe(take(2));
+
+const exhaustSub = firstInterval
+  .pipe(
+    exhaustMap(f => {
+      console.log(`Emission Corrected of first interval: ${f}`);
+      return secondInterval;
+    })
+  )
+  /*
+    当我们订阅第一个 interval 时，它开始发出值(从0开始)。
+    这个值会映射成第二个 interval，然后它开始发出值(从0开始)。
+    当第二个 interval 出于激活状态时，第一个 interval 的值会被忽略。
+    我们可以看到 firstInterval 发出的数字为3，6，等等...
+
+    输出:
+    Emission of first interval: 0
+    0
+    1
+    Emission of first interval: 3
+    0
+    1
+    Emission of first interval: 6
+    0
+    1
+    Emission of first interval: 9
+    0
+    1
+*/
+  .subscribe(s => console.log(s));
+```
+
+### concatMapTo
+
+```typescript
+public concatMapTo(innerObservable: ObservableInput, resultSelector: function(outerValue: T, innerValue: I, outerIndex: number, innerIndex: number): any): Observable
+```
+
+就像是 concatMap, 但是将每个值总是映射为同一个内部 Observable。所以 concatMapTo 内部返回的 observable 是同一个 observable
+
+```typescript
+// RxJS v6+
+import { of, interval } from "rxjs";
+import { concatMapTo, delay, take } from "rxjs/operators";
+
+// 每2秒发出值
+const sampleInterval = interval(500).pipe(take(5));
+const fakeRequest = of("Network request complete").pipe(delay(3000));
+// 前一个完成才会订阅下一个
+const example = sampleInterval.pipe(concatMapTo(fakeRequest));
+// 结果
+// 输出: Network request complete...3s...Network request complete'
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### buffer
+
+```typescript
+buffer(closingNotifier: Observable): Observable
+```
+
+收集输出值，直到提供的 observable 发出值才将收集到的值作为数组发出。
+
+### bufferTime
+
+```typescript
+bufferTime(bufferTimeSpan: number, bufferCreationInterval: number, scheduler: Scheduler): Observable
+```
+
+收集发出的值，直到经过了提供的时间才将其作为数组发出。
+
+### bufferCount
+
+```typescript
+bufferCount(bufferSize: number, startBufferEvery: number = null): Observable
+```
+
+收集发出的值，直到收集完提供的数量的值才将其作为数组发出。
+
+### bufferWhen
+
+```typescript
+bufferWhen(closingSelector: function): Observable
+```
+
+收集值，直到关闭选择器发出值才发出缓冲的值。传入的参数是一个函数，该函数返回值是一个 observable
+
+### bufferToggle
+
+```typescript
+bufferToggle(openings: Observable, closingSelector: Function): Observable
+```
+
+开启开关以捕获源 observable 所发出的值，关闭开关以将缓冲的值作为数组发出。
+
+### window
+
+```typescript
+public window(windowBoundaries: Observable<any>): Observable<Observable<T>>
+```
+
+每当 windowBoundaries 发出项时，将源 Observable 的值分支成嵌套的 Observable 。
+
+> 就像是 buffer, 但发出的是嵌套的 Observable ，而不是数组。
+
+### windowCount
+
+```typescript
+windowCount(windowSize: number, startWindowEvery: number): Observable
+```
+
+将源 Observable 的值分支成多个嵌套的 Observable ，每个嵌套的 Observable 最多发出 windowSize 个值。
+
+### windowTime
+
+```typescript
+windowTime(windowTimeSpan: number, windowCreationInterval: number, scheduler: Scheduler): Observable
+```
+
+在每个提供的时间跨度内，收集源 obsercvable 中的值的 observable 。
+
+### windowWhen
+
+```typescript
+public windowWhen(closingSelector: function(): Observable): Observable<Observable<T>>
+```
+
+将源 Observable 的值分支成嵌套的 Observable ，通过使用关闭 Observable 的工厂函数来决定何时开启新的窗口。
+于 window 的区别就是它传递的是一个函数，该函数返回一个 observable
+
+### windowToggle
+
+```typescript
+public windowToggle(openings: Observable<O>, closingSelector: function(value: O): Observable): Observable<Observable<T>>
+```
+
+以 openings 发出为起始，以 closingSelector 发出为结束，收集并发出源 observable 中的值的 observable 。
+
+> 就像是 bufferToggle, 但是发出的是嵌套 Observable 而不是数组。
