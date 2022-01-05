@@ -4,6 +4,10 @@ title: "目录"
 sidebar_position: 1
 ---
 
+## 新东西
+
+[peerDependencies](https://guoxiaxing.github.io/Blog/docs/新东西/React-and-Svelte)
+
 ## 日常积累
 
 [peerDependencies](https://guoxiaxing.github.io/Blog/docs/日常积累/peerDependencies)
