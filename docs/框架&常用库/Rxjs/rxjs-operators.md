@@ -2432,3 +2432,108 @@ public windowToggle(openings: Observable<O>, closingSelector: function(value: O)
 以 openings 发出为起始，以 closingSelector 发出为结束，收集并发出源 observable 中的值的 observable 。
 
 > 就像是 bufferToggle, 但是发出的是嵌套 Observable 而不是数组。
+
+## 工具
+
+### tap
+
+用于调试，比如说打印日志。不会影响上游的 observable 输出，也就是说会透传接受到的 observable
+
+> 拦截源 Observable 上的每次发送并且运行一个函数，但返回的输出 Observable 与 源 Observable 是相同的，只要不发生错误即可。
+
+```typescript
+public tap(nextOrObserver: Observer | function, error: function, complete: function): Observable
+```
+
+```typescript
+// RxJS v6+
+import { of } from "rxjs";
+import { tap, map } from "rxjs/operators";
+
+const source = of(1, 2, 3, 4, 5);
+// 使用 tap 透明地打印 source 中的值
+const example = source.pipe(
+  tap(val => console.log(`BEFORE MAP: ${val}`)),
+  map(val => val + 10),
+  tap(val => console.log(`AFTER MAP: ${val}`))
+);
+
+// 'tap' 并不转换值
+// 输出: 11...12...13...14...15
+const subscribe = example.subscribe(val => console.log(val));
+```
+
+### delay
+
+将上游 observable 发出的每一个值都延迟指定的 ms 数发出，不影响每个值之间的相对发送时间
+
+```typescript
+public delay(delay: number | Date, scheduler: Scheduler): Observable
+```
+
+通过给定的超时(ms)或者直到一个给定的时间来延迟源 Observable 的发送。
+
+### delayWhen
+
+延迟上游的 observable 的值的发出，直到传入的函数返回的 observable 发出值
+
+```typescript
+public delayWhen(delayDurationSelector: function(value: T): Observable, subscriptionDelay: Observable): Observable
+```
+
+在给定的时间范围内，延迟源 Observable 所有数据项的发送，该时间段由另一个 Observable 的发送决定。
+
+### timeout
+
+```typescript
+public timeout(due: number, scheduler: Scheduler): Observable<R> | WebSocketSubject<T> | Observable<T>
+```
+
+在指定时间间隔内不发出值就报错
+
+```typescript
+// RxJS v6+
+import { of } from "rxjs";
+import { concatMap, timeout, catchError, delay } from "rxjs/operators";
+
+// 模拟请求
+function makeRequest(timeToDelay) {
+  return of("Request Complete!").pipe(delay(timeToDelay));
+}
+
+of(4000, 3000, 2000)
+  .pipe(
+    concatMap(duration =>
+      makeRequest(duration).pipe(
+        timeout(2500),
+        catchError(error => of(`Request timed out after: ${duration}`))
+      )
+    )
+  )
+  /*
+   *  "Request timed out after: 4000"
+   *  "Request timed out after: 3000"
+   *  "Request Complete!"
+   */
+  .subscribe(val => console.log(val));
+```
+
+### toArray
+
+收集源 Observable 发出的值，等到其 complete 的时候，将收集到的值作为一个数组发出
+
+```typescript
+public toArray(): Observable<any[]> | WebSocketSubject<T> | Observable<T>
+```
+
+```typescript
+// RxJS v6+
+import { interval } from "rxjs";
+import { toArray, take } from "rxjs/operators";
+
+interval(100)
+  .pipe(take(10), toArray())
+  .subscribe(console.log);
+
+// output: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+```
