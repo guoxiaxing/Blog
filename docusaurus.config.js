@@ -56,10 +56,6 @@ const config = {
           }
         ]
       },
-      footer: {
-        style: "dark",
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with GuoXiaxing.`
-      },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme

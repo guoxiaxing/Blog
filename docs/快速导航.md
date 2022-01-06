@@ -6,7 +6,7 @@ sidebar_position: 1
 
 ## 新东西
 
-[peerDependencies](https://guoxiaxing.github.io/Blog/docs/新东西/React-and-Svelte)
+[React vs Svelte](https://guoxiaxing.github.io/Blog/docs/新东西/React-and-Svelte)
 
 ## 日常积累
 
@@ -19,6 +19,8 @@ sidebar_position: 1
 ### CSS
 
 [关于 line-height 属性](https://guoxiaxing.github.io/Blog/docs/日常积累/CSS/line-height)
+
+[CSS Module](https://guoxiaxing.github.io/Blog/docs/日常积累/CSS/CSS-Module)
 
 ### Linux
 
