@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkblog=self.webpackChunkblog||[]).push([[9501],{1452:function(e){e.exports=JSON.parse('{"name":"Svelte","permalink":"/Blog/docs/tags/svelte","docs":[{"id":"\u65b0\u4e1c\u897f/React-Svelte","title":"React vs Svelte","description":"React vs Svelte","permalink":"/Blog/docs/\u65b0\u4e1c\u897f/React-and-Svelte"}],"allTagsPath":"/Blog/docs/tags"}')}}]);
