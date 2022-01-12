@@ -12,6 +12,8 @@ sidebar_position: 2
 
 [CSS Module](https://guoxiaxing.github.io/Blog/docs/CSS/CSS-Module)
 
+[元素水平垂直居中](https://guoxiaxing.github.io/Blog/docs/CSS/middle)
+
 ## JavaScript
 
 [如何优雅的对数组进行分组](https://guoxiaxing.github.io/Blog/docs/Javascript/array-groupBy)
@@ -103,6 +105,12 @@ sidebar_position: 2
 [React vs Svelte](https://guoxiaxing.github.io/Blog/docs/学习提升/React-and-Svelte)
 
 [如何优雅的修改第三方包](https://guoxiaxing.github.io/Blog/docs/学习提升/patch-package)
+
+## 读书笔记
+
+### JavaScript
+
+### 数据结构&算法
 
 ## Other
 
