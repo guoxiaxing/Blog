@@ -112,6 +112,8 @@ sidebar_position: 2
 
 ### 数据结构&算法
 
+[链表](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/link-list)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
