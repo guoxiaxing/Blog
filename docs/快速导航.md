@@ -114,12 +114,6 @@ sidebar_position: 2
 
 [链表](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/link-list)
 
-## 课程学习
-
-### 重学前端
-
-[前言](https://guoxiaxing.github.io/Blog/docs/课程学习/重学前端/foreword)
-
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
