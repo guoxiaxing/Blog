@@ -20,6 +20,8 @@ sidebar_position: 2
 
 [深浅拷贝](https://guoxiaxing.github.io/Blog/docs/Javascript/clone)
 
+[toLocaleString 的隐藏用法](https://guoxiaxing.github.io/Blog/docs/Javascript/toLocaleString)
+
 ## 框架&常用库
 
 ### Rxjs
