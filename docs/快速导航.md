@@ -112,6 +112,10 @@ sidebar_position: 2
 
 ### JavaScript
 
+#### 你不知道的 JavaScript
+
+[什么是作用域](https://guoxiaxing.github.io/Blog/docs/读书笔记/JavaScript/你不知道的JavaScript/scope)
+
 ### 数据结构&算法
 
 [链表](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/link-list)
