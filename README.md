@@ -122,6 +122,8 @@ sidebar_position: 2
 
 [词法作用域](https://guoxiaxing.github.io/Blog/docs/读书笔记/JavaScript/你不知道的JavaScript/lexical-scope)
 
+[函数作用域和块作用域](https://guoxiaxing.github.io/Blog/docs/读书笔记/JavaScript/你不知道的JavaScript/func-and-block-scope)
+
 ### 数据结构&算法
 
 [链表](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/link-list)
