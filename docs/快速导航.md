@@ -60,8 +60,6 @@ sidebar_position: 2
 
 [网络分层包含哪几部分？分别的作用](https://guoxiaxing.github.io/Blog/docs/网络/network-layer)
 
-[https传输过程](https://guoxiaxing.github.io/Blog/docs/网络/https-transfer)
-
 ## 工程化
 
 ### 包管理工具
@@ -127,6 +125,8 @@ sidebar_position: 2
 [React vs Svelte](https://guoxiaxing.github.io/Blog/docs/学习提升/React-and-Svelte)
 
 [如何优雅的修改第三方包](https://guoxiaxing.github.io/Blog/docs/学习提升/patch-package)
+
+[Chrome 禁止了这种跨域的解决方案！！！](https://guoxiaxing.github.io/Blog/docs/学习提升/2022-02-15)
 
 ## 读书笔记
 
