@@ -58,6 +58,8 @@ sidebar_position: 2
 
 [Effect Hook](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/Reack%20Hooks/hooks-effect)
 
+[Hook 规则](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/Reack%20Hooks/hooks-rules)
+
 ## 网络
 
 [网络分层包含哪几部分？分别的作用](https://guoxiaxing.github.io/Blog/docs/网络/network-layer)
