@@ -60,7 +60,9 @@ sidebar_position: 2
 
 [网络分层包含哪几部分？分别的作用](https://guoxiaxing.github.io/Blog/docs/网络/network-layer)
 
-[https传输过程](https://guoxiaxing.github.io/Blog/docs/网络/https-transfer)
+[https 传输过程](https://guoxiaxing.github.io/Blog/docs/网络/https-transfer)
+
+[http 常见状态码](https://guoxiaxing.github.io/Blog/docs/网络/http-status-num)
 
 ## 工程化
 
