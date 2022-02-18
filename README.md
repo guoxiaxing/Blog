@@ -72,6 +72,8 @@ sidebar_position: 2
 
 [http 常见状态码](https://guoxiaxing.github.io/Blog/docs/网络/http-status-num)
 
+[DNS 何时使用 TCP 协议，何时使用 UDP 协议？](https://guoxiaxing.github.io/Blog/docs/网络/dns)
+
 ## 工程化
 
 ### 包管理工具
