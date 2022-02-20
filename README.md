@@ -160,6 +160,8 @@ sidebar_position: 2
 
 [链表](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/link-list)
 
+[集合](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/set)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
