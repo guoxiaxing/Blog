@@ -74,6 +74,8 @@ sidebar_position: 2
 
 [DNS 何时使用 TCP 协议，何时使用 UDP 协议？](https://guoxiaxing.github.io/Blog/docs/网络/dns)
 
+[HTTP Headers 字段以及作用](https://guoxiaxing.github.io/Blog/docs/网络/http-headers)
+
 ## 工程化
 
 ### 包管理工具
