@@ -76,6 +76,8 @@ sidebar_position: 2
 
 [HTTP Headers 字段以及作用](https://guoxiaxing.github.io/Blog/docs/网络/http-headers)
 
+[http headers 之 origin，host 和 referer 的区别](https://guoxiaxing.github.io/Blog/docs/网络/origin-referer-host)
+
 ## 工程化
 
 ### 包管理工具
