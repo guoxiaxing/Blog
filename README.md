@@ -82,6 +82,8 @@ sidebar_position: 2
 
 [http2 的特性;多路复用怎么实现;和长链接的区别](https://guoxiaxing.github.io/Blog/docs/网络/http2)
 
+[异步请求为什么会导致 tcp 的对头阻塞](https://guoxiaxing.github.io/Blog/docs/网络/Head-of-Line-Blocking)
+
 ## 工程化
 
 ### 包管理工具
