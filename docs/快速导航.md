@@ -38,6 +38,10 @@ sidebar_position: 2
 
 [组件生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/component)
 
+[组件视图](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/view)
+
+[组件交互](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/component-interaction)
+
 ### React
 
 [基础概念](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/basic)
