@@ -88,6 +88,9 @@ sidebar_position: 2
 
 [异步请求为什么会导致 tcp 的对头阻塞](https://guoxiaxing.github.io/Blog/docs/网络/Head-of-Line-Blocking)
 
+[tcp的粘包拆包及其解决方式](https://guoxiaxing.github.io/Blog/docs/网络/tcp-sticky-package-and-unpacking)
+
+
 ## 工程化
 
 ### 包管理工具
