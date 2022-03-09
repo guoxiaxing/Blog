@@ -92,6 +92,8 @@ sidebar_position: 2
 
 [为什么会有 OPTIONS 请求](https://guoxiaxing.github.io/Blog/docs/网络/options-request)
 
+[http 缓存](https://guoxiaxing.github.io/Blog/docs/网络/http-cache)
+
 ## 工程化
 
 ### 包管理工具
