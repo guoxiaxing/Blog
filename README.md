@@ -162,6 +162,8 @@ sidebar_position: 2
 
 [Chrome 禁止了这种跨域的解决方案！！！](https://guoxiaxing.github.io/Blog/docs/学习提升/2022-02-15)
 
+[console 常用的调试方法](https://guoxiaxing.github.io/Blog/docs/学习提升/console-debug)
+
 ## 读书笔记
 
 ### JavaScript
