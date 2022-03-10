@@ -44,6 +44,8 @@ sidebar_position: 2
 
 [组件样式](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/component-styles)
 
+[内容投影](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/content-projection)
+
 ### React
 
 [基础概念](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/basic)
