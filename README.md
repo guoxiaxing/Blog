@@ -36,6 +36,10 @@ sidebar_position: 2
 
 [formControl 的 disabled 属性绑定不生效](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular-form-contol-disabled)
 
+#### angular 文档
+
+##### 组件
+
 [组件生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component)
 
 [组件视图](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/view)
@@ -47,6 +51,10 @@ sidebar_position: 2
 [内容投影](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/content-projection)
 
 [组件的高级功能](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component-higher)
+
+##### 模版
+
+[文本插值](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/模版/interpolation)
 
 ### React
 
