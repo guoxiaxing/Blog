@@ -56,6 +56,8 @@ sidebar_position: 2
 
 [文本插值](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/模版/interpolation)
 
+[模版语句](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/模版/template-statements)
+
 ### React
 
 [基础概念](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/basic)
