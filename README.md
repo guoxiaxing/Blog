@@ -36,15 +36,17 @@ sidebar_position: 2
 
 [formControl 的 disabled 属性绑定不生效](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular-form-contol-disabled)
 
-[组件生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/component)
+[组件生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component)
 
-[组件视图](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/view)
+[组件视图](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/view)
 
-[组件交互](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/component-interaction)
+[组件交互](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component-interaction)
 
-[组件样式](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/component-styles)
+[组件样式](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component-styles)
 
-[内容投影](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/content-projection)
+[内容投影](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/content-projection)
+
+[组件的高级功能](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component-higher)
 
 ### React
 
