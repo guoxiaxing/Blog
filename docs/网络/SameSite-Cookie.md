@@ -66,7 +66,9 @@ Set-Cookie: widget_session=abc123; SameSite=None
 Set-Cookie: widget_session=abc123; SameSite=None; Secure
 ```
 
-## 补充（同源和同站的区别）
+## 补充
+
+### 同源和同站的区别
 
 - 同源：协议（scheme）+ 主机名（hostname）+ 端口号（port） 完全一致。
 - 同站：eTLD（有效顶级域名）+1 （二级域名）完全一致。
@@ -82,3 +84,13 @@ Set-Cookie: widget_session=abc123; SameSite=None; Secure
 | `https://www.example.com:80`    | 否，因为 port 不同     | **是，端口号不影响** |
 | `https://www.example.com:443`   | **是，完全一致**       | **是**               |
 | `https://www.example.com`       | **是，默认端口号 443** | **是**               |
+
+### 第一方 Cookie 和第三方 Cookie
+
+第一方 Cookie 是由地址栏中列出的网站域设置的 Cookie，即 Cookie 设置的 domain 和当前网站的域名相同或者是当前网站的域名的二级域名，而第三方 Cookie 来自非当前网站域设置的 Cookie
+
+#### Cookie 的同源策略
+
+Cookie 中的同源只关注域名（有效二级域名相同即可），忽略协议和端口。
+
+所以`https://localhost:8080/`和`http://localhost:8081/`的 Cookie 是共享的。
