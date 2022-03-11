@@ -114,6 +114,8 @@ sidebar_position: 2
 
 [http 请求什么情况下会携带 cookie](https://guoxiaxing.github.io/Blog/docs/网络/http-request-cookie)
 
+[Cookie 的 SameSite 属性](https://guoxiaxing.github.io/Blog/docs/网络/SameSite-Cookie)
+
 ## 工程化
 
 ### 包管理工具
