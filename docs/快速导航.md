@@ -188,6 +188,8 @@ sidebar_position: 2
 
 [console 常用的调试方法](https://guoxiaxing.github.io/Blog/docs/学习提升/console-debug)
 
+[type 和 interface 的区别](https://guoxiaxing.github.io/Blog/docs/学习提升/type-interface-diff)
+
 ## 读书笔记
 
 ### JavaScript
