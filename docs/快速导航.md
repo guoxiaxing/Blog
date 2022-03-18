@@ -216,6 +216,12 @@ sidebar_position: 2
 
 [字典和散列](https://guoxiaxing.github.io/Blog/docs/读书笔记/算法&数据结构/map-and-hash)
 
+### 掘金小册
+
+#### 前端面试之道
+
+[JS 基础知识点及常考面试题](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/javascript)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
