@@ -126,6 +126,9 @@ sidebar_position: 2
 
 ### 包管理工具
 
+[npm和yarn的依赖管理](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm&yarn)
+
+
 #### pnpm
 
 [pnpm](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/pnpm/pnpm)
