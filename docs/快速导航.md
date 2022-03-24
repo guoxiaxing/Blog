@@ -72,8 +72,9 @@ sidebar_position: 2
 
 [React Hooks 的优缺点](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/think-about-react-hooks)
 
-[React Fiber是什么](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/react-fiber)
+[React Fiber 是什么](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/react-fiber)
 
+[高阶组件和生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/React/2022-03-23)
 
 #### React Hooks
 
@@ -129,8 +130,7 @@ sidebar_position: 2
 
 ### 包管理工具
 
-[npm和yarn的依赖管理](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm&yarn)
-
+[npm 和 yarn 的依赖管理](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm&yarn)
 
 #### pnpm
 
