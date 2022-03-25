@@ -4,6 +4,8 @@ title: npm tag
 tags: [npm-tag]
 ---
 
+[npm 发包必读](https://juejin.cn/post/6844903870678695943#heading-3)
+
 ## npm 的 tag
 
 我们可以通过 `npm dist-tag ls [<pkg>]` 来查看一个包的 tag，一般来说我们至少会有三种类型的标签。
