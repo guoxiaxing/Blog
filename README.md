@@ -144,6 +144,8 @@ sidebar_position: 2
 
 [peerDependencies](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm/peerDependencies)
 
+[查看包的版本信息](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm/package-versions)
+
 ### CI&CD
 
 #### GitHub Actions
