@@ -146,6 +146,8 @@ sidebar_position: 2
 
 [查看包的版本信息](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm/package-versions)
 
+[npm tag](https://guoxiaxing.github.io/Blog/docs/工程化/包管理工具/npm/npm-tag)
+
 ### CI&CD
 
 #### GitHub Actions
