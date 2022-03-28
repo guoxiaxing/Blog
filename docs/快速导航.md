@@ -38,6 +38,8 @@ sidebar_position: 2
 
 #### angular 文档
 
+[指令](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/directives)
+
 ##### 组件
 
 [组件生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component)
