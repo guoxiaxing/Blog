@@ -238,6 +238,8 @@ sidebar_position: 2
 
 [JS 基础知识点及常考面试题](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/javascript)
 
+[ES6 基础知识点及常考面试题](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/es6)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
