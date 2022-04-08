@@ -72,6 +72,10 @@ Accept/Accept-Language/Content-Language/Content-Type/DPR/Downlink/Save-Data/View
 
 application/x-www-form-urlencoded、multipart/form-data、text/plain
 
+4.  请求中的任意 XMLHttpRequest 对象均没有注册任何事件监听器；XMLHttpRequest 对象可以使用 XMLHttpRequest.upload 属性访问。
+
+5.  请求中没有使用 ReadableStream 对象。
+
 ## 优化 Options 请求
 
 可见一旦达到触发条件，跨域请求便会一直发送 2 次请求，这样增加的请求数是否可优化呢？答案是可以，OPTIONS 预检请求的结果可以被缓存。

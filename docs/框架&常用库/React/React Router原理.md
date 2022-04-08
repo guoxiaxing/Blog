@@ -85,11 +85,13 @@ window.addEventListener("hashchange", function(e) {
 
 ### Routes 组件
 
-是一个承载多个 Routes 组件的容器
+是一个承载多个 Route 组件的容器
 
 找到与当前 path,匹配的组件进行渲染。 通过 location.pathname 和组件的 path 进行匹配。找到符合 path 的 Route 组件。
 
-### Route-组件页面承载容器
+### Route
+
+组件页面承载容器
 
 匹配 path,渲染组件。作为路由组件的容器,可以根据将实际的组件渲染出来。
 
