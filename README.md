@@ -252,6 +252,8 @@ sidebar_position: 2
 
 [数组的应用](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/数组的应用)
 
+[字符串的应用](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/字符串的应用)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
