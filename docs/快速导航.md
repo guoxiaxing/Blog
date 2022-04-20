@@ -246,6 +246,8 @@ sidebar_position: 2
 
 [JS 异步编程及常考面试题](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/JS异步编程及常考面试题)
 
+[手写 Promise](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/手写Promise)
+
 #### 前端算法和数据结构
 
 [二叉树的遍历](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/二叉树的遍历)
