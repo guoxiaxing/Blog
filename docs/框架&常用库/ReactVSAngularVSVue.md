@@ -26,7 +26,7 @@ Vue 和 angular 鼓励你去写近似常规 HTML 的模板。写起来很接近�
 
 在底层渲染方面，vue 和 react 都使用的虚拟 dom，而 angular 却没有使用，查了一下，他好像使用的是 [Incremental DOM](https://blog.csdn.net/rockan007/article/details/90716237)
 
-> 增量 DOM： 每个组件都被编译成一系列指令。这些指令创建 DOM 树并在数据更改时就地更新它们.
+> 增量 DOM： 每个组件都被编译成一系列指令。这些指令创建 DOM 树并在数据更改时就地更新它们. 而组件只是在引用这些指令
 
 ### 函数式编程，声明式编程
 
