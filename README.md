@@ -24,6 +24,8 @@ sidebar_position: 2
 
 ## 框架&常用库
 
+[细说 vue react angular 区别](https://guoxiaxing.github.io/Blog/docs/框架&常用库/react-angular-vue)
+
 ### Rxjs
 
 [rxjs 基础概念](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Rxjs/rxjs-basic)
