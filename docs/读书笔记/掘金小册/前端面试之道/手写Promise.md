@@ -275,3 +275,126 @@ let p = new MyPromise(resolve => {
     console.log(v);
   });
 ```
+
+## Promise 规范
+
+### 术语
+
+1. ‘promise’ 是一个有符合此标准的 then 方法的 object 或 function
+2. ‘thenable’ 是 then 方法定义的 object 或 function
+3. ‘value’ 是一个 JavaScript 合法值（包括 undefined，thenable，promise）- resolve 的 value
+4. ‘exception’ 是一个 throw 语句抛出错误的值
+5. ‘reason’ 是一个表明 promise 失败的原因的值
+
+### 要求
+
+#### 状态
+
+- pending
+- resolved
+- rejected
+
+只能由 pending -> resolved / pending -> rejected
+
+##### resolved 状态
+
+- 不能在改变为其他状态
+- 必须要有一个 value
+
+##### rejected 状态
+
+- 不能再改变为其他状态
+- 必须要有一个 reason
+
+### then 方法
+
+一个 promise 必须提供一个 then 方法，用来获取当前或最终的 value 或 reason
+
+一个 promise 的 then 方法接受两个参数：
+
+`promise.then(onFulfilled, onRejected)`
+
+1. onFulfilled 和 onRejected 都是可选的，如果没有提供或者提供的不是函数则将值和 reason 透传
+
+2. 如果 onFulfilled 是一个函数
+
+- 他会在 promise 的状态变为 resolved 后调用，并且接收到一个 value
+- 只会被调用一次
+
+3. 如果 onRejected 是一个函数
+
+- 他会在 promise 的状态变为 rejected 之后调用，并且接收到一个 reason
+- 只会被调用一次
+
+4.  onFulfilled 或 onRejected 都是异步调用，也就是说等同步代码执行完毕之后调用
+
+5.  promise 的 then 可以链式调用多次
+
+- 如果或当 promise 转态是 resolved 时，所有的 onFulfilled 回调回以他们注册时的顺序依次执行
+- 如果或当 promise 转态是 rejected 时，所有的 onRejected 回调回以他们注册时的顺序依次执行
+
+6. then 方法返回一个 promise `promise2 = promise1.then(onFulfilled, onRejected);`
+
+- 如果 onFulfilled 或 onRejected 返回的是一个 x，那么它会以 `[[Resolve]](promise2, x)` 处理解析
+- 如果 onFulfilled 或 onRejected 里抛出了一个异常，那么 promise2 必须捕获这个错误（接受一个 reason 参数）
+
+```javascript
+if (that.state === RESOLVED) {
+  setTimeout(() => {
+    try {
+      const x = onFulfilled(that.value);
+      resolutionProcedure(p2, x, resolve, reject);
+    } catch (e) {
+      reject(e);
+    }
+  }, 0);
+}
+
+if (that.state === REJECTED) {
+  setTimeout(() => {
+    try {
+      const x = onRejected(that.value);
+      resolutionProcedure(p2, x, resolve, reject);
+    } catch (e) {
+      reject(e);
+    }
+  }, 0);
+}
+```
+
+- 如果 onFulfilled 不是一个函数，并且 promise1 状态是 resolved, promise2 一定会接受到与 promse1 一样的值 value
+- 如果 onRejected 不是一个函数，并且 promise1 状态是 rejected，promise2 一定会接受到与 promise1 一样的值 reason
+
+其实也就是值透传
+
+### Promise 的处理程序
+
+promise 处理程序是一个表现形式为 `[[Resolve]](promise, x)` 的抽象处理操作。如果 x 是 thenable 类型，它会尝试生成一个 promise 处理 x，否则它将直接 resolve x
+
+`[[Resolve]](promise, x)` 的执行表现形式如下步骤：
+
+1. 如果返回的 promise1 和 x 是指向同一个引用（循环引用），则抛出错误
+2. 如果 x 是一个 promise 实例，则采用它的状态:
+
+- 如果 x 是 pending 状态，那么保留它（递归执行这个 promise 处理程序），直到 pending 状态转为 resolved 或 rejected 状态
+- 如果或当 x 状态是 resolved，resolve 它，并且传入和 promise1 一样的值 value
+- 如果或当 x 状态是 rejected，reject 它，并且传入和 promise1 一样的值 reason
+
+3. 如果 x 是个对象或函数类型
+
+- 把 x.then 赋值给 then 变量
+- 如果捕获（try，catch）到 x.then 抛出的错误的话，需要 reject 这个 promise
+- 如果 then 是函数类型，那个用 x 调用它（将 then 的 this 指向 x）,第一个参数传 resolvePromise ，第二个参数传 rejectPromise
+  - 如果或当 resolvePromise 被调用并接受一个参数 y 时，执行 `[[Resolve]](promise, y)`
+  - 如果或当 rejectPromise 被调用并接受一个参数 r 时，执行 reject(r)
+  - 如果 resolvePromise 和 rejectPromise 已经被调用或以相同的参数多次调用的话吗，优先第一次的调用，并且之后的调用全部被忽略（避免多次调用）
+  - 如果 then 执行过程中抛出了异常
+    - 如果 resolvePromise 或 rejectPromise 已经被调用，那么忽略异常
+    - 否则，则 reject 这个异常
+
+4. 如果 then 不是函数类型，直接 resolve x（resolve(x)）
+5. 如果 x 即不是函数类型也不是对象类型，直接 resolve x（resolve(x)）
+
+### 备注
+
+1. onFulfilled 和 onRejected 都在下一轮的事件循环中（一个新的栈）被异步调用。可以用宏任务，例如：setTimeout，setImmediate 或者微任务，例如：MutationObsever 或 process.nextTick 实现。 由于 promise 的实现被当做平台代码，所以它本身可能包含一个任务队列或 “trampoline” 的处理程序
