@@ -22,6 +22,8 @@ sidebar_position: 2
 
 [toLocaleString 的隐藏用法](https://guoxiaxing.github.io/Blog/docs/Javascript/toLocaleString)
 
+[为什么操作 DOM 消耗性能](https://guoxiaxing.github.io/Blog/docs/Javascript/为什么操作DOM消耗性能)
+
 ## 框架&常用库
 
 [细说 vue react angular 区别](https://guoxiaxing.github.io/Blog/docs/框架&常用库/react-angular-vue)
