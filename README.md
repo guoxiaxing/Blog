@@ -266,6 +266,8 @@ sidebar_position: 2
 
 [链表的应用](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/链表的应用)
 
+[快慢指针和多指针](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/快慢指针和多指针)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
