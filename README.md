@@ -274,6 +274,8 @@ sidebar_position: 2
 
 [DFS 和 BFS](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/DFS和BFS)
 
+[递归和回溯思想的应用](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/递归和回溯思想的应用)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
