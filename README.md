@@ -218,6 +218,8 @@ sidebar_position: 2
 
 [跨域请求到底会不会被服务器执行](https://guoxiaxing.github.io/Blog/docs/学习提升/2022-04-08)
 
+[useEvent](https://guoxiaxing.github.io/Blog/docs/学习提升/useEvent)
+
 ## 读书笔记
 
 ### JavaScript
