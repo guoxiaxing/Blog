@@ -282,6 +282,8 @@ sidebar_position: 2
 
 [特殊的二叉树-二叉搜索树](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/特殊的二叉树-二叉搜索树)
 
+[特殊的二叉树-平衡二叉树](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/特殊的二叉树-平衡二叉树)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
