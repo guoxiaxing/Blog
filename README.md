@@ -288,6 +288,8 @@ sidebar_position: 2
 
 [排序算法](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/排序算法)
 
+[动态规划](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/动态规划)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
