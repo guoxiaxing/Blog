@@ -260,6 +260,8 @@ sidebar_position: 2
 
 [浏览器基础知识点及常考面试题](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/浏览器基础知识点及常考面试题)
 
+[浏览器缓存机制](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/浏览器缓存机制)
+
 #### 前端算法和数据结构
 
 [二叉树的遍历](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/二叉树的遍历)
