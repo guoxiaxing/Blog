@@ -264,6 +264,8 @@ sidebar_position: 2
 
 [浏览器渲染原理](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/浏览器渲染原理)
 
+[安全防范知识点](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/安全防范知识点)
+
 #### 前端算法和数据结构
 
 [二叉树的遍历](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/二叉树的遍历)
