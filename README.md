@@ -270,7 +270,9 @@ sidebar_position: 2
 
 [性能优化](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/性能优化)
 
-[UDP和TCP](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/UDP和TCP)
+[UDP 和 TCP](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/UDP和TCP)
+
+[输入一个 URL 到页面渲染的过程](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端面试之道/输入一个URL到页面渲染的过程)
 
 #### 前端算法和数据结构
 
