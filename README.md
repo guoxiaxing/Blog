@@ -314,6 +314,8 @@ sidebar_position: 2
 
 [内置 Hooks（2）：为什么要避免重复定义回调函数？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-21-2)
 
+[进一步认识 Hooks ：如何正确理解函数组件的生命周期？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-22-1)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
