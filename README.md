@@ -316,6 +316,8 @@ sidebar_position: 2
 
 [进一步认识 Hooks ：如何正确理解函数组件的生命周期？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-22-1)
 
+[自定义Hooks](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-22-2)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
