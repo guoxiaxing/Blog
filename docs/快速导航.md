@@ -318,6 +318,8 @@ sidebar_position: 2
 
 [自定义Hooks](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-22-2)
 
+[复杂状态处理：如何保证状态一致性？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-23-1)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
