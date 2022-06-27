@@ -322,6 +322,8 @@ sidebar_position: 2
 
 [异步处理：如何向服务器端发送请求？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-27-1)
 
+[函数组件设计模式：如何应对复杂条件渲染场景？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-27-2)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
