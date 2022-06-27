@@ -324,6 +324,8 @@ sidebar_position: 2
 
 [函数组件设计模式：如何应对复杂条件渲染场景？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-27-2)
 
+[事件处理：如何创建自定义事件？](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-27-3)
+
 ## Other
 
 [搜索插件](https://github.com/easyops-cn/docusaurus-search-local)
