@@ -308,6 +308,10 @@ sidebar_position: 2
 
 [真题训练](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/真题训练)
 
+#### React进阶实践指南
+
+[我们写的JSX终将变成什么](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/我们写的JSX终将变成什么)
+
 ### React Hooks 核心原理与实战
 
 [内置 Hooks（1）：如何保存组件状态和使用生命周期](https://guoxiaxing.github.io/Blog/docs/读书笔记/React%20Hooks核心原理与实战/2022-06-21-1)
