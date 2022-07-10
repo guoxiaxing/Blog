@@ -308,11 +308,13 @@ sidebar_position: 2
 
 [真题训练](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/前端算法和数据结构/真题训练)
 
-#### React进阶实践指南
+#### React 进阶实践指南
 
-[我们写的JSX终将变成什么](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/我们写的JSX终将变成什么)
+[我们写的 JSX 终将变成什么](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/我们写的JSX终将变成什么)
 
 [起源 Component](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/起源Component)
+
+[玄学state](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/玄学state)
 
 ### React Hooks 核心原理与实战
 
