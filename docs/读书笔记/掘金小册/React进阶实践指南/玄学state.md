@@ -246,3 +246,64 @@ export default function Index() {
 - setState 在底层处理逻辑上主要是和老 state 进行合并处理，而 useState 更倾向于重新赋值。
 
 - setState 有专门监听 state 变化的回调函数 callback，可以获取最新state；但是在函数组件中，只能通过 useEffect 来执行 state 变化引起的副作用。
+
+## 一个奇怪的现象
+
+```jsx
+import { useState, useEffect } from "react";
+import "./styles.css";
+
+export default function App() {
+  const [count, setCount] = useState();
+  const [count1, setCount1] = useState();
+  useEffect(() => {
+    console.log("count: ", count);
+    console.log("count1: ", count1);
+  }, [count, count1]);
+
+  console.log("yan1", count);
+  return (
+    <div className="App">
+      <button
+        onClick={() => {
+          setCount(1);
+          setCount1(2);
+        }}
+      >
+        set 1
+      </button>
+    </div>
+  );
+}
+```
+
+我以为：
+
+点击按钮：会输出
+
+因为有两次setState，第一次count发生变化，所以组件重新渲染，useEffect执行一次；第二次count1发生变化，所以组件重新渲染useEffect执行一次。
+
+```text
+
+yan1 1
+count:  1
+count1:  undefined
+
+
+yan1 1
+count:  1
+count1:  2
+
+```
+
+但是事实是
+
+```text
+yan1 1
+count:  1
+count1:  2
+```
+
+点击按钮，组件渲染了一次，useEffect也只执行了一次。why???
+
+难道与useEffect的执行时机有关系。useEffect执行的时候count已经变成了1，count1已经变成了2所以只执行一次？？？
