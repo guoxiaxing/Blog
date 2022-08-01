@@ -163,3 +163,137 @@ const Son = React.memo(() => <ConsumerDemo />);
   )}
 </ThemeProvider>
 ```
+
+### 其他 api
+
+#### displayName
+
+context 对象接受一个名为 displayName 的 property，类型为字符串。React DevTools 使用该字符串来确定 context 要显示的内容。
+
+```javascript
+
+const MyContext = React.createContext(/* 初始化内容 */);
+MyContext.displayName = 'MyDisplayName';
+
+<MyContext.Provider> // "MyDisplayName.Provider" 在 DevTools 中
+<MyContext.Consumer> // "MyDisplayName.Consumer" 在 DevTools 中
+
+```
+
+:::info
+
+问：context 与 props 和 react-redux 的对比？
+
+答： context 解决了：
+
+- 解决了 props 需要每一层都手动添加 props 的缺陷。
+
+- 解决了改变 value ，组件全部重新渲染的缺陷。（context 改变 value 只需要消费 context 的组件更新。不需要像props那样，更新组件树）
+
+react-redux 就是通过 Provider 模式把 redux 中的 store 注入到组件中的。
+
+:::
+
+## context 高阶用法
+
+### 嵌套 Provider
+
+```jsx
+const ThemeContext = React.createContext(null); // 主题颜色Context
+const LanContext = React.createContext(null); // 主题语言Context
+
+function ConsumerDemo() {
+  return (
+    <ThemeContext.Consumer>
+      {(themeContextValue) => (
+        <LanContext.Consumer>
+          {(lanContextValue) => {
+            const { color, background } = themeContextValue;
+            return (
+              <div style={{ color, background }}>
+                {" "}
+                {lanContextValue === "CH"
+                  ? "大家好，让我们一起学习React!"
+                  : "Hello, let us learn React!"}{" "}
+              </div>
+            );
+          }}
+        </LanContext.Consumer>
+      )}
+    </ThemeContext.Consumer>
+  );
+}
+
+const Son = memo(() => <ConsumerDemo />);
+export default function ProviderDemo() {
+  const [themeContextValue] = React.useState({
+    color: "#FFF",
+    background: "blue",
+  });
+  const [lanContextValue] = React.useState("CH"); // CH -> 中文 ， EN -> 英文
+  return (
+    <ThemeContext.Provider value={themeContextValue}>
+      <LanContext.Provider value={lanContextValue}>
+        <Son />
+      </LanContext.Provider>
+    </ThemeContext.Provider>
+  );
+}
+```
+
+### 逐层传递 Provider
+
+```jsx
+// 逐层传递Provder
+const ThemeContext = React.createContext(null);
+function Son2() {
+  return (
+    <ThemeContext.Consumer>
+      {(themeContextValue2) => {
+        const { color, background } = themeContextValue2;
+        return (
+          <div className="sonbox" style={{ color, background }}>
+            {" "}
+            第二层Provder{" "}
+          </div>
+        );
+      }}
+    </ThemeContext.Consumer>
+  );
+}
+function Son() {
+  const { color, background } = React.useContext(ThemeContext);
+  const [themeContextValue2] = React.useState({
+    color: "#fff",
+    background: "blue",
+  });
+  /* 第二层 Provder 传递内容 */
+  return (
+    <div className="box" style={{ color, background }}>
+      第一层Provder
+      <ThemeContext.Provider value={themeContextValue2}>
+        <Son2 />
+      </ThemeContext.Provider>
+    </div>
+  );
+}
+
+export default function Provider1Demo() {
+  const [themeContextValue] = React.useState({
+    color: "orange",
+    background: "pink",
+  });
+  /* 第一层  Provider 传递内容  */
+  return (
+    <ThemeContext.Provider value={themeContextValue}>
+      <Son />
+    </ThemeContext.Provider>
+  );
+}
+```
+
+#### Provider 特性总结：
+
+- Provider 作为提供者传递 context ，provider 中 value 属性改变会使所有消费 context 的组件重新更新。
+
+- Provider 可以逐层传递 context，下一层 Provider 会覆盖上一层 Provider。(也就是组件的context的取值是离组件最近的provider的value)
