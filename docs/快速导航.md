@@ -314,17 +314,19 @@ sidebar_position: 2
 
 [起源 Component](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/起源Component)
 
-[玄学state](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/玄学state)
+[玄学 state](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/玄学state)
 
-[深入props](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/深入props)
+[深入 props](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/深入props)
 
 [理解生命周期](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/理解生命周期)
 
-[多功能Ref](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/多功能Ref)
+[多功能 Ref](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/多功能Ref)
 
-[提供者context](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/提供者context)
+[提供者 context](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/提供者context)
 
-[模块化css](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/模块化css)
+[模块化 css](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/模块化css)
+
+[渲染控制](https://guoxiaxing.github.io/Blog/docs/读书笔记/掘金小册/React进阶实践指南/渲染控制)
 
 ### React Hooks 核心原理与实战
 
