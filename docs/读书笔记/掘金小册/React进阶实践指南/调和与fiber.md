@@ -273,3 +273,85 @@ commit 细分可以分为：
 - Before mutation 阶段（执行 DOM 操作前）；
 - mutation 阶段（执行 DOM 操作）；
 - layout 阶段（执行 DOM 操作后）
+
+##### Before mutation
+
+```js title=react-reconciler/src/ReactFiberWorkLoop.js
+function commitBeforeMutationEffects() {
+  while (nextEffect !== null) {
+    const effectTag = nextEffect.effectTag;
+    if ((effectTag & Snapshot) !== NoEffect) {
+      const current = nextEffect.alternate;
+      // 调用getSnapshotBeforeUpdates
+      commitBeforeMutationEffectOnFiber(current, nextEffect);
+    }
+    if ((effectTag & Passive) !== NoEffect) {
+      scheduleCallback(NormalPriority, () => {
+        flushPassiveEffects();
+        return null;
+      });
+    }
+    nextEffect = nextEffect.nextEffect;
+  }
+}
+```
+
+Before mutation 阶段做的事主要有以下内容：
+
+- 因为 Before mutation 还没修改真实的 DOM ，是获取 DOM 快照的最佳时期，如果是类组件有 getSnapshotBeforeUpdate ，那么会执行这个生命周期。
+- 会异步调用 useEffect ，在生命周期章节讲到 useEffect 是采用异步调用的模式，其目的就是防止同步执行时阻塞浏览器做视图渲染。
+
+##### Mutation
+
+```js
+function commitMutationEffects() {
+  while (nextEffect !== null) {
+    if (effectTag & Ref) {
+      /* 置空Ref */
+      const current = nextEffect.alternate;
+      if (current !== null) {
+        commitDetachRef(current);
+      }
+    }
+    switch (primaryEffectTag) {
+      case Placement: {
+      } //  新增元素
+      case Update: {
+      } //  更新元素
+      case Deletion: {
+      } //  删除元素
+    }
+  }
+}
+```
+
+mutation 阶段做的事情有：
+
+- 置空 ref ，在 ref 章节讲到对于 ref 的处理。
+- 对新增元素，更新元素，删除元素。进行真实的 DOM 操作。
+
+##### Layout
+
+```js
+function commitLayoutEffects(root) {
+  while (nextEffect !== null) {
+    const effectTag = nextEffect.effectTag;
+    commitLayoutEffectOnFiber(
+      root,
+      current,
+      nextEffect,
+      committedExpirationTime
+    );
+    if (effectTag & Ref) {
+      commitAttachRef(nextEffect);
+    }
+  }
+}
+```
+
+Layout 阶段 DOM 已经更新完毕，Layout 做的事情有：
+
+- commitLayoutEffectOnFiber 对于类组件，会执行生命周期，setState 的 callback，对于函数组件会执行 useLayoutEffect 钩子。
+- 如果有 ref ，会重新赋值 ref 。
+
+**commit 阶段：主要做的事就是执行 effectList，更新 DOM，执行生命周期，获取 ref 等操作。**
