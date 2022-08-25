@@ -1,6 +1,6 @@
 ---
 slug: 自定义Hook
-title: 优化-细节
+title: 自定义Hook
 tags: [掘金小册, React进阶实践指南, 自定义Hook]
 ---
 
