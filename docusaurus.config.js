@@ -6,8 +6,8 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "Try's Blog",
-  tagline: "记录📝",
+  title: "Day Day Up",
+  tagline: "正经的工作 💻 和不正经的吃喝玩乐 🍰 ☕️ 🏃‍♀️ 😄",
   url: "https://guoxiaxing.github.io",
   baseUrl: `${process.env.NODE_ENV === "development" ? "/" : "/Blog/"}`,
   onBrokenLinks: "throw",
