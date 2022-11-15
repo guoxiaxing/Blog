@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
-        <title>Try's Blog Blog</title>
+        <title>Day Day Up Blog</title>
         <link>https://guoxiaxing.github.io/Blog/blog</link>
-        <description>Try's Blog Blog</description>
-        <lastBuildDate>Tue, 15 Nov 2022 08:41:35 GMT</lastBuildDate>
+        <description>Day Day Up Blog</description>
+        <lastBuildDate>Fri, 25 Nov 2022 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <item>
-            <title><![CDATA[welcome to my life]]></title>
-            <link>https://guoxiaxing.github.io/Blog/blog/life</link>
-            <guid>life</guid>
-            <pubDate>Tue, 15 Nov 2022 08:41:35 GMT</pubDate>
-            <description><![CDATA[不正经的吃喝玩乐 🍰 ☕️ 🏃‍♀️ 😄]]></description>
-            <content:encoded><![CDATA[<p>不正经的吃喝玩乐 🍰 ☕️ 🏃‍♀️ 😄</p>]]></content:encoded>
+            <title><![CDATA[一个月居家生活之后重回公司]]></title>
+            <link>https://guoxiaxing.github.io/Blog/blog/2022-11-15</link>
+            <guid>2022-11-15</guid>
+            <pubDate>Fri, 25 Nov 2022 00:00:00 GMT</pubDate>
+            <description><![CDATA[居家结束后第一次上班的早晨]]></description>
+            <content:encoded><![CDATA[<h3>居家结束后第一次上班的早晨</h3><p>不习惯早起，整个人困困🥱的。</p><p>11月的北京也是真的冷，坐在电动车的后座瑟瑟发抖，想念穿着短袖短裤的日子</p><h3>工作第一天被谈话</h3><p>总结的说就是工作积极性不够，也不够主动。只想着完成业务需求，没有其他贡献，和 xx 的差距越来越大了。</p><h3>被谈话后自己的思考</h3><p>确实明确指出了我自己本身的问题，就我自己的性格来说，是不愿意主动提问，也不愿意被人关注的，对于大多数的问题懒得思考，其实归根结底就是一个<strong>懒</strong>字。很多事情都懒得坚持，总是三分钟热度，每天的生活也是得过且过，越来越没有冲劲了。不对也不想改。</p><p>每天想到上班就down，下班就想赶紧回家，运动、洗澡、躺着玩手机。</p><p>有一阵子会想改变自己，开始看书、刷题、记笔记、学博客。但是总是坚持不了多久，然后又恢复之前的样子。而且学到的东西印象也不够深刻，放几天就忘了。</p><p>本来以为和自己差不多混日子的人，其实私下里比自己强多了。有认真的工作、思考、生活、充实自己。</p><p>本来以为自己这样是当代年轻人👧👦现状，其实好像不然。</p><p>今天一下午也认真思考这件事，然后又翻出自己之前写的博客，写的时候天天更新，但是距离最后一次更新也已经有两个月了，间隔极其不均匀，果然三分钟热度。而且看着自己写的流水账，好像也没啥印象了。</p><p>现在这个状态真的是不喜欢，每天都感觉迷迷糊糊，不清醒，就仿佛是自己在做梦一样。</p><p>我想改一改自己现在的状态，哪怕只是一点一点的改。</p><h3>那么怎么改呢</h3><p><strong>说在前头 - 不是flag，不是flag，不是flag，重要的事情说三遍！！！</strong></p><p>关于积累📒</p><ul><li><p>不写流水账，可以看的东西记录到笔记上，然后把自己的理解或者是觉得的重点最后记录到博客上（博客上不要复制粘贴...最好是自己消化的东西）</p></li><li><p>不要急于求成，给自己立一个太有难度的目标，容易放弃，也容易糊弄（要清晰的认识自己）</p></li><li><p>短期目标，易于看到效果</p></li><li><p>可以周末在博客上总结一下自己一周的收获（PS: 如果有的话）</p></li></ul><p>关于工作💻</p><ul><li><p>不要成迷于简单重复的工作，也可以慢慢让自己尝试有挑战的工作，实践！</p></li><li><p>对于工作中碰到的问题 / 自己有学习到的新知识，写文档记录下来，然后总结到博客</p></li></ul><p>关于健身🏃‍♀️</p><ul><li>保持就好😊</li></ul>]]></content:encoded>
         </item>
     </channel>
 </rss>
