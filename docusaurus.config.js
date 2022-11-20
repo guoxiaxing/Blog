@@ -36,9 +36,9 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: "Try's Blog",
+        title: "Fine's Blog",
         logo: {
-          alt: "Try's Blog",
+          alt: "Fine's Blog",
           src: `/img/logo.png`
         },
         items: [
