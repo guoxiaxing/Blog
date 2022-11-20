@@ -170,6 +170,14 @@ sidebar_position: 2
 
 [husky 7.x 使用](https://guoxiaxing.github.io/Blog/docs/工程化/husky/husky)
 
+### 构建工具
+
+#### vite
+
+[vite 开发模式下页面无法展示](https://guoxiaxing.github.io/Blog/docs/工程化/构建工具/vite/vite-dev-error)
+
+[vite2 升级](https://guoxiaxing.github.io/Blog/docs/工程化/构建工具/vite/vite2-upgrade)
+
 ## 工具
 
 ### git
