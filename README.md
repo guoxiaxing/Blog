@@ -64,7 +64,7 @@ sidebar_position: 2
 
 [模版语句](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/模版/template-statements)
 
-[相关知识]](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/模版/about-template)
+[相关知识](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/模版/about-template)
 
 ### React
 
