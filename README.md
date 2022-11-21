@@ -40,9 +40,12 @@ sidebar_position: 2
 
 [formControl 的 disabled 属性绑定不生效](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular-form-contol-disabled)
 
+[将 angular 组件打包为 webComponents](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular-web-components)
+
 #### angular 文档
 
 [指令](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/directives)
+
 
 ##### 组件
 
