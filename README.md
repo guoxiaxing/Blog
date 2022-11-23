@@ -46,7 +46,6 @@ sidebar_position: 2
 
 [指令](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/directives)
 
-
 ##### 组件
 
 [组件生命周期](https://guoxiaxing.github.io/Blog/docs/框架&常用库/Angular/angular官方文档/组件/component)
@@ -186,6 +185,10 @@ sidebar_position: 2
 ### git
 
 [相关文章](https://guoxiaxing.github.io/Blog/docs/工具/git/articles)
+
+### babel
+
+[@babel/preset-env和@babel/plugin-transform-runtime](https://guoxiaxing.github.io/Blog/docs/工具/babel/babe-preset-env和babel-plugin-transform-runtimes)
 
 ## Linux
 
