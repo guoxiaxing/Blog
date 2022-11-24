@@ -394,6 +394,12 @@ webComponent 传递 boolean 类型的属性时，只要我们添加了这个属�
 
 当外界传给 question 的只是 undefined 的时候，这个 set 逻辑不会执行，所以判断 webComponent 会移除该属性，因为普通的 angular 组件，当某个属性值是 undefined 的时候会执行该输入属性的 set 逻辑的
 
+### 需要在 module 中声明 webComponent 依赖的组件以及依赖组件的依赖组件,以此类推
+
+angular 打包 webComponent 的时候会打包里面使用到的所有组件，以及这些组件依赖的组件，所以组件以及组件依赖的组件都需要在 webComponent 定义的 module 中去声明，否则就会报错。
+
+![](/img/angular/1669279887261-cb437bda-eb6d-4347-82a3-573bfeead70b.png)
+
 ## 参考文档
 
 - React 中使用 angular webComponent Demo：https://github.com/phodal/wc-angular-demo
